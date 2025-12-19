@@ -1,12 +1,27 @@
-import { renderDocument } from "docx-preview";
 import { useEffect, useRef } from "react";
+type props = { htmlString: string | null; setHtmlString: (html: string) => void };
 
-export function Edit({ parsedDoc }: { parsedDoc: Record<string, unknown> | null }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!parsedDoc || !ref.current) return;
-    renderDocument(parsedDoc, ref.current);
-  }, [parsedDoc]);
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
-  return <div ref={ref} contentEditable id="edit-container" />;
+
+export function Edit({ htmlString, setHtmlString }: props) {
+  // const ref = useRef<HTMLDivElement>(null);
+  // useEffect(() => {
+  //   const element = ref.current;
+  //   return () => {
+  //     if(element) setHtmlString(element.innerHTML);
+  //   }
+  // }, [setHtmlString])
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: htmlString || '<p>Hello World! 🌎️</p>',
+    // Don't render immediately on the server to avoid SSR issues
+    shouldRerenderOnTransaction: false,
+    immediatelyRender: false,
+  })
+
+  return <EditorContent editor={editor} />
+
 }

@@ -1,0 +1,4 @@
+Known limitations 
+- Broken Pagination system
+- Poor image placement
+- 

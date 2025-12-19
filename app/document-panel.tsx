@@ -1,17 +1,19 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { parseAsync } from "docx-preview";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, Upload, Printer, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
 import { Edit } from "./edit";
+import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
-export function DocumentPanel() {
+export function DocumentPanel({ data }: { data: unknown }) {
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [parsedDoc, setParsedDoc] = useState<Record<string, unknown> | null>(null);
+  // const [parsedDoc, setParsedDoc] = useState<Record<string, unknown> | null>(null);
+  const [htmlString, setHtmlString] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,19 +30,24 @@ export function DocumentPanel() {
   const parseDocx = async (file: File) => {
     try {
       // Parse the docx file using parseAsync
-      const parsedDoc = await parseAsync(file);
-      console.log(parsedDoc);
-      setParsedDoc(parsedDoc);
-      // const htmlString = await getHTMLStringFromParsedDoc(parsedDoc);
+      const htmlString = await getHTMLStringFromParsedDoc(file);
+      setHtmlString(htmlString);
     } catch (error) {
       console.error("Error parsing docx:", error);
     }
   };
+  const sidebar = useSidebar();
+  const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
 
   return (
-    <Tabs defaultValue="preview">
+    <Tabs
+      defaultValue="preview"
+      onValueChange={(value) => setActiveTab(value as "preview" | "edit")}
+    >
       <div className="flex flex-col gap-4 w-full h-full">
         <div className="top-0 z-10 sticky flex items-center gap-4 bg-white px-4 py-2 border-gray-300 border-b">
+          {!sidebar.open && <SidebarTrigger />}
+
           <Input
             ref={fileInputRef}
             type="file"
@@ -51,7 +58,7 @@ export function DocumentPanel() {
           <Button
             size={"icon"}
             onClick={() => fileInputRef.current?.click()}
-            variant={parsedDoc ? "secondary" : "default"}
+            variant={htmlString ? "secondary" : "default"}
           >
             {/* Upload Document */}
             <Upload />
@@ -65,23 +72,32 @@ export function DocumentPanel() {
             <TabsTrigger
               value="edit"
               className="flex items-center gap-2 w-36"
-              disabled={!parsedDoc}
+              disabled={!htmlString}
             >
               <SquarePen className="w-4 h-4" />
               Edit
             </TabsTrigger>
           </TabsList>
-          <Button size={"icon"} variant={"secondary"}>
+          <Button
+            size={"icon"}
+            variant={"secondary"}
+            onClick={printPreview}
+            disabled={!htmlString || activeTab !== "preview"}
+          >
             <Printer />
           </Button>
         </div>
 
         <TabsContent value="preview">
-          <Preview parsedDoc={parsedDoc} handleFileUpload={() => fileInputRef.current?.click()} />
+          <Preview
+            data={data}
+            htmlString={htmlString}
+            handleFileUpload={() => fileInputRef.current?.click()}
+          />
         </TabsContent>
 
         <TabsContent value="edit">
-          <Edit parsedDoc={parsedDoc} />
+          <Edit htmlString={htmlString} setHtmlString={setHtmlString} />
         </TabsContent>
       </div>
     </Tabs>
