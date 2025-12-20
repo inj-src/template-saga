@@ -24,7 +24,7 @@ export default function Home() {
   const { selectedDataKey, selectedData, setSelectedDataKey } = useDataStore();
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={false}>
       {/* <div className="flex w-full"> */}
       <Sidebar side="left" className="bg-[#f6f5f5] border-r overflow-auto">
         <SidebarHeader>

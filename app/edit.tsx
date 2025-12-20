@@ -2,25 +2,33 @@ import { useEffect, useRef } from "react";
 type props = { htmlString: string | null; setHtmlString: (html: string) => void };
 
 import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-
+import { extractNodeNames, KeepAttributes } from "@/lib/tiptap/keep-attributes";
+import Document from '@tiptap/extension-document'
+import { nodes } from "@/lib/tiptap/nodes";
+import Text from '@tiptap/extension-text'
 
 export function Edit({ htmlString, setHtmlString }: props) {
-  // const ref = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   const element = ref.current;
-  //   return () => {
-  //     if(element) setHtmlString(element.innerHTML);
-  //   }
-  // }, [setHtmlString])
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      Document,
+      Text,
+      KeepAttributes.configure({
+        types: extractNodeNames(nodes),
+      }),
+      ...nodes,
+    ],
     content: htmlString || '<p>Hello World! 🌎️</p>',
-    // Don't render immediately on the server to avoid SSR issues
+    injectCSS: false,
+    editable: false,
     shouldRerenderOnTransaction: false,
     immediatelyRender: false,
+    enableContentCheck: true,
+    onContentError: ({ editor, error }) => {
+      console.log(error)
+    }
   })
+
 
   return <EditorContent editor={editor} />
 

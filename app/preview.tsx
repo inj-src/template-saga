@@ -41,7 +41,8 @@ export function Preview({
       <div
         dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
-        className="overflow-auto"
+        className="overflow-auto flex justify-center gap-4 items-center flex-col [&>section]:shadow-xs [&>section]:outline [&>section]:outline-stone-300 py-4"
+
       />
     </div>
   );
