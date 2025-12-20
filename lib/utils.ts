@@ -9,22 +9,17 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function getHTMLStringFromParsedDoc(file: File): Promise<string> {
   const container = document.createElement("div");
-  let styleContainer: HTMLDivElement | null = document.querySelector("#style_container");
-  if (!styleContainer) {
-    styleContainer = document.createElement("div");
-    styleContainer.id = "style_container";
-    document.body.appendChild(styleContainer);
-  }
-
-  await renderAsync(file, container, styleContainer, { inWrapper: false });
+  // await renderAsync(file, container, styleContainer, { inWrapper: false });
+  await renderAsync(file, container, undefined, { inWrapper: false });
   return purifyTemplate(container.innerHTML);
 }
 
 export async function printPreview() {
   const { default: print } = await import("print-js");
-  const styleContainer: HTMLDivElement | null = document.querySelector("#style_container");
+  // const styleContainer: HTMLDivElement | null = document.querySelector("#style_container");
 
-  print({ printable: "preview-container", type: "html", scanStyles: false, style: styleContainer?.innerHTML });
+  // print({ printable: "preview-container", type: "html", scanStyles: false, style: styleContainer?.innerHTML });
+  print({ printable: "preview-container", type: "html", scanStyles: false });
 }
 
 function purifyTemplate(innerHTML: string) {

@@ -15,7 +15,7 @@ export const Table = Node.create<TableOptions>({
 
    group: 'block',
 
-   content: '(colgroup | tableRow)+',
+   content: '(colgroup | tableRow | tableBody)+',
 
    isolating: true,
 

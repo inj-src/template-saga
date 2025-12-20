@@ -46,9 +46,11 @@ export const Bill = {
     due: 8975.5,
     paidAmountInWord: "Sixty Thousand Dollars Only",
   },
-  printDetails: {
-    printBy: "billing_clerk_02",
-    printingTime: "2025-12-09T00:23:00Z",
+  printDetails: { 
+    data: {
+      printBy: "billing_clerk_02",
+      printingTime: "2025-12-09T00:23:00Z",
+    }
   },
 };
 

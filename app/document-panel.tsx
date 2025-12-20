@@ -105,7 +105,7 @@ export function DocumentPanel({ data }: { data: unknown }) {
         </TabsContent>
 
         <TabsContent value="edit">
-          <Edit htmlString={htmlString} setHtmlString={setHtmlString} />
+          <Edit htmlString={htmlString} setHtmlString={setHtmlString} data={data} />
         </TabsContent>
       </div>
     </Tabs>

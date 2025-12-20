@@ -1,25 +1,28 @@
 import { useEffect } from "react";
-type props = { htmlString: string | null; setHtmlString: (html: string) => void };
 
 import { useEditor, EditorContent } from '@tiptap/react'
-import { extractNodeNames, KeepAttributes } from "@/lib/tiptap/keep-attributes";
-import Document from '@tiptap/extension-document'
-import { nodes } from "@/lib/tiptap/nodes";
-import Text from '@tiptap/extension-text'
-import { UndoRedo } from '@tiptap/extensions'
+import { KeepAttributes } from "@/lib/tiptap/keep-attributes";
+import { nodes, NODE_NAMES } from "@/lib/tiptap/nodes";
+import StarterKit from '@tiptap/starter-kit'
+import { TextStyleKit } from '@tiptap/extension-text-style'
+import { HandlebarsSuggestion } from "@/lib/tiptap/handlebars-suggestion";
 
-export function Edit({ htmlString, setHtmlString }: props) {
+type EditProps = {
+  htmlString: string | null;
+  setHtmlString: (html: string) => void;
+  data: unknown;
+};
 
+export function Edit({ htmlString, setHtmlString, data }: EditProps) {
   const editor = useEditor({
     extensions: [
-      Document,
-      Text,
-      UndoRedo,
-
+      TextStyleKit,
+      StarterKit,
       KeepAttributes.configure({
-        types: extractNodeNames(nodes),
+        types: [...NODE_NAMES, 'paragraph', 'table', 'tableRow', 'tableHeader', 'tableCell', 'tableBody'],
       }),
       ...nodes,
+
     ],
     editorProps: {
       attributes: {
@@ -27,8 +30,7 @@ export function Edit({ htmlString, setHtmlString }: props) {
       },
     },
     content: htmlString || '<p>Hello World! 🌎️</p>',
-    injectCSS: false,
-    // editable: false,
+    // injectCSS: false,
     shouldRerenderOnTransaction: false,
     immediatelyRender: false,
     enableContentCheck: true,
@@ -38,7 +40,7 @@ export function Edit({ htmlString, setHtmlString }: props) {
   })
 
   useEffect(() => {
-    let savedHtml = '';
+    let savedHtml = htmlString || '';
     editor?.on('update', () => {
       savedHtml = editor.getHTML();
     })
@@ -46,10 +48,13 @@ export function Edit({ htmlString, setHtmlString }: props) {
       editor?.destroy();
       setHtmlString(savedHtml);
     }
-  }, [editor, setHtmlString])
+  }, [editor, setHtmlString, htmlString])
 
   return (
-    <EditorContent editor={editor} />
+    <>
+      <EditorContent editor={editor} />
+      <HandlebarsSuggestion editor={editor} data={data} />
+    </>
   )
 
 

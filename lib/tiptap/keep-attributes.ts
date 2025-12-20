@@ -1,8 +1,5 @@
 import { Extension, Node } from '@tiptap/react'
 
-export function extractNodeNames(nodes: Node[]) {
-   return nodes.map((node) => node.name)
-}
 
 export const KeepAttributes = Extension.create({
    name: 'keepAttributes',

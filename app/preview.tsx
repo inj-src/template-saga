@@ -24,7 +24,7 @@ export function Preview({
     const err = error as Error;
 
     templateString = `<div class="p-4 text-red-600">
-      <strong>Error:</strong> ${err.name}: ${err.message}<br/>
+      <strong>Error:</strong> ${err.message}<br/>
       <div class="mt-2 text-gray-700 text-sm">Hint: check your Handlebars expressions, registered helpers, and the shape of the provided data.</div>
     </div>`;
   }
