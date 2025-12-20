@@ -19,6 +19,8 @@ export const Span = Node.create<SpanOptions>({
 
    content: 'inline*',
 
+   whitespace: 'pre',
+
    parseHTML() {
       return [{ tag: 'span' }]
    },

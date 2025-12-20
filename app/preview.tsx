@@ -1,7 +1,7 @@
 import { registerAllHelpers } from "@/lib/handlebars/helpers";
 import { FileText } from "lucide-react";
 import Handlebars from "handlebars";
-import { processTemplateExpressions } from "@/lib/utils";
+// import { processTemplateExpressions } from "@/lib/utils";
 
 registerAllHelpers();
 
@@ -13,13 +13,12 @@ export function Preview({
   data: unknown;
   htmlString: string | null;
   handleFileUpload: () => void;
-}) {
-  const innerHTML = htmlString || "";
+  }) {
   let templateString = "";
 
   try {
-    const processedHTML = processTemplateExpressions(innerHTML);
-    const template = Handlebars.compile(processedHTML);
+    // const processedHTML = processTemplateExpressions(innerHTML);
+    const template = Handlebars.compile(htmlString || "");
     templateString = template(data);
   } catch (error) {
     const err = error as Error;
@@ -41,7 +40,7 @@ export function Preview({
       <div
         dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
-        className="overflow-auto flex justify-center gap-4 items-center flex-col [&>section]:shadow-xs [&>section]:outline [&>section]:outline-stone-300 py-4"
+        className="w-max mx-auto space-y-4 my-4 items-center flex-col [&>section]:shadow-xs [&>section]:outline [&>section]:outline-stone-300"
 
       />
     </div>

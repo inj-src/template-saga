@@ -17,7 +17,7 @@ export async function getHTMLStringFromParsedDoc(file: File): Promise<string> {
   }
 
   await renderAsync(file, container, styleContainer, { inWrapper: false });
-  return container.innerHTML;
+  return purifyTemplate(container.innerHTML);
 }
 
 export async function printPreview() {
@@ -27,22 +27,28 @@ export async function printPreview() {
   print({ printable: "preview-container", type: "html", scanStyles: false, style: styleContainer?.innerHTML });
 }
 
-export function processTemplateExpressions(innerHTML: string) {
+function purifyTemplate(innerHTML: string) {
+  let processedHTMLString = removeSpanTagsFromExpressions(innerHTML);
+  processedHTMLString = processedHTMLString.replaceAll("”", '"').replaceAll("“", '"');
+
+  return processedHTMLString;
+}
+
+function removeSpanTagsFromExpressions(innerHTML: string) {
   const expressions = Array.from(innerHTML.matchAll(/{{2,}([\s\S]*?)}{2,}/gm));
 
   let indexOffset = 0;
   expressions.forEach((expr) => {
     const fullMatch = expr[0];
     const text = parse(fullMatch).textContent;
-    const replacedText = text.replaceAll("”", '"').replaceAll("“", '"');
     // performing a splice operation
     innerHTML = replaceStringWithOffset(
       innerHTML,
       fullMatch,
-      replacedText,
+      text,
       expr.index + indexOffset
     );
-    indexOffset += replacedText.length - fullMatch.length;
+    indexOffset += text.length - fullMatch.length;
   });
   return innerHTML;
 }
@@ -65,3 +71,4 @@ function replaceStringWithOffset(
   // Combine the prefix and the modified suffix
   return prefix + replacedSuffix;
 }
+

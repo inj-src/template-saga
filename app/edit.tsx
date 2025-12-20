@@ -6,6 +6,7 @@ import { extractNodeNames, KeepAttributes } from "@/lib/tiptap/keep-attributes";
 import Document from '@tiptap/extension-document'
 import { nodes } from "@/lib/tiptap/nodes";
 import Text from '@tiptap/extension-text'
+import { UndoRedo } from '@tiptap/extensions'
 
 export function Edit({ htmlString, setHtmlString }: props) {
 
@@ -13,14 +14,20 @@ export function Edit({ htmlString, setHtmlString }: props) {
     extensions: [
       Document,
       Text,
+      UndoRedo,
       KeepAttributes.configure({
         types: extractNodeNames(nodes),
       }),
       ...nodes,
     ],
+    editorProps: {
+      attributes: {
+        class: 'w-max mx-auto [&_section]:outline-1 [&_section]:outline-stone-300 [&_section]:shadow-sn space-y-4 my-4',
+      },
+    },
     content: htmlString || '<p>Hello World! 🌎️</p>',
     injectCSS: false,
-    editable: false,
+    // editable: false,
     shouldRerenderOnTransaction: false,
     immediatelyRender: false,
     enableContentCheck: true,
