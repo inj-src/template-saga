@@ -30,7 +30,6 @@ export function registerAccumulateHelper() {
     }
   );
 }
-
 interface TableContext {
   [key: string]: unknown;
 }

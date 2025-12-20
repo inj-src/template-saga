@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 type props = { htmlString: string | null; setHtmlString: (html: string) => void };
 
 import { useEditor, EditorContent } from '@tiptap/react'
@@ -8,7 +8,6 @@ import { nodes } from "@/lib/tiptap/nodes";
 import Text from '@tiptap/extension-text'
 import { UndoRedo } from '@tiptap/extensions'
 
-
 export function Edit({ htmlString, setHtmlString }: props) {
 
   const editor = useEditor({
@@ -16,6 +15,7 @@ export function Edit({ htmlString, setHtmlString }: props) {
       Document,
       Text,
       UndoRedo,
+
       KeepAttributes.configure({
         types: extractNodeNames(nodes),
       }),
@@ -32,22 +32,25 @@ export function Edit({ htmlString, setHtmlString }: props) {
     shouldRerenderOnTransaction: false,
     immediatelyRender: false,
     enableContentCheck: true,
-    onContentError: ({ editor, error }) => {
+    onContentError: ({ error }) => {
       console.log(error)
     }
   })
 
   useEffect(() => {
-    let htmlString = '';
+    let savedHtml = '';
     editor?.on('update', () => {
-      htmlString = editor.getHTML();
+      savedHtml = editor.getHTML();
     })
     return () => {
       editor?.destroy();
-      setHtmlString(htmlString);
+      setHtmlString(savedHtml);
     }
-  }, [editor])
+  }, [editor, setHtmlString])
 
-  return <EditorContent editor={editor} />
+  return (
+    <EditorContent editor={editor} />
+  )
+
 
 }
