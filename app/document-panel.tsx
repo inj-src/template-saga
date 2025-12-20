@@ -4,11 +4,12 @@ import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, Upload, Printer, SquarePen } from "lucide-react";
+import { Eye, Upload, Printer, SquarePen, BookOpen } from "lucide-react";
 import { Preview } from "./preview";
 import { Edit } from "./edit";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export function DocumentPanel({ data }: { data: unknown }) {
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -78,14 +79,21 @@ export function DocumentPanel({ data }: { data: unknown }) {
               Edit
             </TabsTrigger>
           </TabsList>
-          <Button
-            size={"icon"}
-            variant={"secondary"}
-            onClick={printPreview}
-            disabled={!htmlString || activeTab !== "preview"}
-          >
-            <Printer />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link href="/docs">
+              <Button size={"icon"} variant={"secondary"} title="Help & Documentation">
+                <BookOpen />
+              </Button>
+            </Link>
+            <Button
+              size={"icon"}
+              variant={"secondary"}
+              onClick={printPreview}
+              disabled={!htmlString || activeTab !== "preview"}
+            >
+              <Printer />
+            </Button>
+          </div>
         </div>
 
         <TabsContent value="preview">

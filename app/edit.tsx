@@ -8,6 +8,7 @@ import { nodes } from "@/lib/tiptap/nodes";
 import Text from '@tiptap/extension-text'
 import { UndoRedo } from '@tiptap/extensions'
 
+
 export function Edit({ htmlString, setHtmlString }: props) {
 
   const editor = useEditor({
@@ -36,6 +37,16 @@ export function Edit({ htmlString, setHtmlString }: props) {
     }
   })
 
+  useEffect(() => {
+    let htmlString = '';
+    editor?.on('update', () => {
+      htmlString = editor.getHTML();
+    })
+    return () => {
+      editor?.destroy();
+      setHtmlString(htmlString);
+    }
+  }, [editor])
 
   return <EditorContent editor={editor} />
 

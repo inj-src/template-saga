@@ -47,7 +47,7 @@ function tableTarget(this: unknown, targetName: string, options: Handlebars.Help
   const root = parse(codeBlock);
   const table = root.querySelector("table");
   if (table) {
-    table.setAttribute("data-_table-target_", targetName);
+    table.setAttribute("data-_table-target_", targetName || "target");
   } else {
     console.warn("table target helper: no <table> element found in block content");
     return codeBlock;
@@ -77,11 +77,10 @@ function tableHelper(context: TableContext[], options: Handlebars.HelperOptions)
   const blockContent = options.fn(undefined, runtimeOptions);
 
   const root = parse(blockContent);
-  const tableSelector = options.hash.target
-    ? `table[data-_table-target_="${options.hash.target}"]`
-    : "table";
+  const tableSelector = `table[data-_table-target_="${options.hash.target || 'target'}"]`
 
-  const table = root.querySelector(tableSelector);
+  // If no table is found with the table selector then catch the first table;
+  const table = root.querySelector(tableSelector) || root.querySelector("table");
   if (!table) {
     console.warn("table helper: no <table> element found in block content");
     return blockContent;
