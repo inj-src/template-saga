@@ -5,7 +5,7 @@ import { KeepAttributes } from "@/lib/tiptap/keep-attributes";
 import { nodes, NODE_NAMES } from "@/lib/tiptap/nodes";
 import StarterKit from '@tiptap/starter-kit'
 import { TextStyleKit } from '@tiptap/extension-text-style'
-import { HandlebarsSuggestion } from "@/lib/tiptap/handlebars-suggestion";
+import { HandlebarsSuggestion } from "@/lib/tiptap/handlebars-suggestion/handlebars-suggestion";
 
 type EditProps = {
   htmlString: string | null;

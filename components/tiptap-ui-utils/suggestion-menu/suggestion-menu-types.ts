@@ -89,6 +89,11 @@ export interface SuggestionMenuProps<T = DefaultContext>
    */
   maxHeight?: number
   /**
+   * If true, the suggestion command will NOT automatically delete the range before calling onSelect.
+   * Useful when onSelect handles replacement manually (e.g. replacing a larger range like {{...}}).
+   */
+  manualDeletion?: boolean;
+  /**
    * Render function for the menu content.
    */
   children: (props: SuggestionMenuRenderProps<T>) => React.ReactNode

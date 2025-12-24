@@ -155,7 +155,7 @@ export const SuggestionMenu = ({
           }
         )
 
-        if (!isMention) {
+        if (!isMention && !internalSuggestionPropsRef.current.manualDeletion) {
           const cursorPosition = selection.$from.pos
           const previousNode = selection.$head?.nodeBefore
 
