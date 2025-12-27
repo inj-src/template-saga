@@ -31,6 +31,16 @@ export interface HelperDefinition {
   hashParams?: HashParam[];
   /** Private variables injected inside the block scope */
   privateVars?: PrivateVar[];
+  /** Does this helper switch the context for its block? */
+  switchesContext?: boolean;
+  /** What data type does this helper expect its first param to be? */
+  expectedDataType?: 'array' | 'object' | 'any';
+  /** 
+   * How to resolve the new context from the param:
+   * - 'element': context becomes each element (for array iteration)
+   * - 'direct': context becomes the param value directly
+   */
+  contextResolution?: 'element' | 'direct';
 }
 
 /**
@@ -49,6 +59,9 @@ export const BUILTIN_HELPERS: HelperDefinition[] = [
       { name: '@last', desc: 'True if last iteration' },
       { name: '@key', desc: 'Current key (for object iteration)' },
     ],
+    switchesContext: true,
+    expectedDataType: 'array',
+    contextResolution: 'element',
   },
   {
     name: 'if',
@@ -67,6 +80,9 @@ export const BUILTIN_HELPERS: HelperDefinition[] = [
     type: 'block',
     description: 'Change context for the block',
     params: [{ name: 'context', type: 'object', required: true }],
+    switchesContext: true,
+    expectedDataType: 'object',
+    contextResolution: 'direct',
   },
   // Inline helpers
   {
@@ -109,6 +125,9 @@ export const CUSTOM_HELPERS: HelperDefinition[] = [
       { name: '@last', desc: 'True if last row' },
       { name: '@length', desc: 'Total number of items' },
     ],
+    switchesContext: true,
+    expectedDataType: 'array',
+    contextResolution: 'element',
   },
   {
     name: 'table-target',

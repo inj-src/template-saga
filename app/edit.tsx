@@ -6,6 +6,7 @@ import { nodes, NODE_NAMES } from "@/lib/tiptap/nodes";
 import StarterKit from '@tiptap/starter-kit'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import { HandlebarsSuggestion } from "@/lib/tiptap/handlebars-suggestion/handlebars-suggestion";
+import { HandlebarLintIndicator } from "@/lib/tiptap/handlebars-suggestion/HandlebarLintIndicator";
 
 type EditProps = {
   htmlString: string | null;
@@ -26,6 +27,10 @@ export function Edit({ htmlString, setHtmlString, data }: EditProps) {
     ],
     editorProps: {
       attributes: {
+        spellcheck: 'false', // Use 'false' as a string value for HTML attributes
+        autocomplete: 'off',
+        autocorrect: 'off',
+        autocapitalize: 'off',
         class: 'w-max mx-auto [&_section]:outline-1 [&_section]:outline-stone-300 [&_section]:shadow-sn space-y-4 my-4',
       },
     },
@@ -53,7 +58,8 @@ export function Edit({ htmlString, setHtmlString, data }: EditProps) {
   return (
     <>
       <EditorContent editor={editor} />
-      <HandlebarsSuggestion editor={editor} data={data} />
+      <HandlebarsSuggestion editor={editor} JSONData={data} />
+      <HandlebarLintIndicator editor={editor} />
     </>
   )
 

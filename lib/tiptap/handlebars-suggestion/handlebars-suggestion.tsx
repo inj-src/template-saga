@@ -13,11 +13,13 @@ import {
 import {
    ALL_HELPERS,
    getBlockHelpers,
+   getHelperByName,
    COMMON_PRIVATE_VARS,
    type HelperDefinition,
    type PrivateVar,
 } from "@/lib/tiptap/handlebars-suggestion/helper-definitions";
 import { handleFieldSelect, handleHelperSelect, handlePrivateVarSelect, parseQueryContext } from "./utils";
+import { getBlockContextAtPosition, getDataAtContext } from "./block-context";
 import { SuggestionMatch, Trigger } from "@tiptap/suggestion";
 
 // Icons
@@ -86,7 +88,7 @@ type AnySuggestionItem = FieldSuggestionItem | HelperSuggestionItem | PrivateVar
 
 interface HandlebarsSuggestionProps {
    editor: Editor | null;
-   data: unknown;
+   JSONData: unknown;
 }
 
 /**
@@ -140,11 +142,16 @@ function findHandlebarsMatch(config: Trigger): SuggestionMatch {
 
 export function HandlebarsSuggestion({
    editor,
-   data,
+   JSONData,
 }: HandlebarsSuggestionProps) {
 
    // Generate suggestion items based on query
-   const getSuggestionItems = async ({ query }: { query: string; editor: Editor }): Promise<AnySuggestionItem[]> => {
+   const getSuggestionItems = async ({ query, editor: suggestionEditor }: { query: string; editor: Editor }): Promise<AnySuggestionItem[]> => {
+      // Get block context at cursor position for context-aware suggestions
+      const fullText = suggestionEditor.getText();
+      const cursorPos = suggestionEditor.state.selection.from;
+      const blockContext = getBlockContextAtPosition(fullText, cursorPos, JSONData);
+
       const context = parseQueryContext(query);
       const items: AnySuggestionItem[] = [];
 
@@ -174,13 +181,65 @@ export function HandlebarsSuggestion({
          return items;
       }
 
+      // Block helper parameter suggestions (after #helperName )
+      if (context.type === 'blockHelperParam' && context.helperName) {
+         const helper = getHelperByName(context.helperName);
+
+         // Get field suggestions, filtering by helper's expected data type
+         if (JSONData !== null && JSONData !== undefined) {
+            const allFieldSuggestions = getSuggestionsAtPath(JSONData, context.basePath);
+
+            // Filter by expected data type if helper specifies one
+            const typeFilteredSuggestions = helper?.expectedDataType
+               ? allFieldSuggestions.filter((s) => {
+                  if (helper.expectedDataType === 'array') return s.type === 'array';
+                  if (helper.expectedDataType === 'object') return s.type === 'object';
+                  return true; // 'any' accepts all
+               })
+               : allFieldSuggestions;
+
+            const filteredFields = context.query
+               ? typeFilteredSuggestions.filter((s) =>
+                  s.name.toLowerCase().startsWith(context.query.toLowerCase())
+               )
+               : typeFilteredSuggestions;
+
+            const singleItemAndCompletelyMatchingQuery = filteredFields.length === 1 && filteredFields[0].name.toLowerCase() === context.query.toLowerCase();
+            if (singleItemAndCompletelyMatchingQuery) return [];
+
+            items.push(
+               ...filteredFields.map((suggestion): FieldSuggestionItem => ({
+                  title: suggestion.name,
+                  subtext: `${suggestion.type} - for ${context.helperName}`,
+                  category: 'field',
+                  fieldData: suggestion,
+                  onSelect: ({ editor, range }) => {
+                     // Insert just the field path, keeping the #helperName prefix
+                     const insertPath = context.basePath
+                        ? `{{#${context.helperName} ${context.basePath}.${suggestion.name}`
+                        : `{{#${context.helperName} ${suggestion.name}`;
+
+                     editor
+                        .chain()
+                        .focus()
+                        .insertContent(insertPath)
+                        .run();
+                  },
+               }))
+            );
+         }
+         return items;
+      }
+
       // Private variable suggestions (after @)
       if (context.type === 'privateVar') {
+         // Use context-aware private variables from enclosing blocks
+         const availableVars = blockContext.availablePrivateVars;
          const filtered = context.query
-            ? COMMON_PRIVATE_VARS.filter((v) =>
+            ? availableVars.filter((v) =>
                v.name.slice(1).toLowerCase().startsWith(context.query.toLowerCase())
             )
-            : COMMON_PRIVATE_VARS;
+            : availableVars;
 
          const singleItemAndCompletelyMatchingQuery = filtered.length === 1 && filtered[0].name.toLowerCase() === context.query.toLowerCase();
          if (singleItemAndCompletelyMatchingQuery) return [];
@@ -199,9 +258,16 @@ export function HandlebarsSuggestion({
          return items;
       }
 
-      // Field suggestions
-      if (data && (context.type === 'field' || context.type === 'all')) {
-         const allFieldSuggestions = getSuggestionsAtPath(data, context.basePath);
+      // Field suggestions - use context-aware data based on enclosing block helpers
+      if (context.type === 'field' || context.type === 'all') {
+         // Get the effective data at the current block context
+         const contextualData = blockContext.currentPath
+            ? getDataAtContext(JSONData, blockContext.currentPath)
+            : JSONData;
+
+         // Only show field suggestions if we have data to work with
+         if (contextualData !== null && contextualData !== undefined) {
+            const allFieldSuggestions = getSuggestionsAtPath(contextualData, context.basePath);
          const filteredFields = context.query
             ? allFieldSuggestions.filter((s) =>
                s.name.toLowerCase().startsWith(context.query.toLowerCase())
@@ -219,6 +285,7 @@ export function HandlebarsSuggestion({
                },
             }))
          );
+      }
       }
 
       // Helper suggestions (only at root level, no path navigation)

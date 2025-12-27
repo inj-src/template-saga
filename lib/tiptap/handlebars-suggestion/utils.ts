@@ -36,13 +36,33 @@ export function handleHelperSelect(
 }
 
 export function parseQueryContext(query: string): ExpressionContext {
-   const trimmed = query.trim();
+   const trimmed = query.trimStart();
 
    // Check for block helper context (starts with #)
    if (trimmed.startsWith('#')) {
+      const afterHash = trimmed.slice(1);
+
+      // Check if there's a space - means we're in param context
+      const spaceIndex = afterHash.indexOf(' ');
+      if (spaceIndex !== -1) {
+         const helperName = afterHash.slice(0, spaceIndex);
+         const paramQuery = afterHash.slice(spaceIndex + 1).trim();
+
+         // Parse the param query for path navigation
+         const parsed = parseExpressionText(paramQuery);
+
+         return {
+            type: 'blockHelperParam',
+            helperName,
+            query: parsed.query,
+            basePath: parsed.basePath,
+         };
+      }
+
+      // No space yet - still typing helper name
       return {
          type: 'blockHelper',
-         query: trimmed.slice(1), // Remove #
+         query: afterHash,
          basePath: '',
       };
    }
