@@ -11,6 +11,8 @@ export interface ExpressionContext {
    basePath: string;
    /** When type is 'blockHelperParam', the helper name we're providing a param for */
    helperName?: string;
+   /** Number of ../ segments to go up in parent context (0 = current context) */
+   parentLevels?: number;
 }
 
 /**

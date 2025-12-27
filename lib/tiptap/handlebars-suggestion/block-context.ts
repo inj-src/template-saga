@@ -32,6 +32,12 @@ export interface ContextStack {
   currentPath: string;
   /** All private variables available from enclosing blocks */
   availablePrivateVars: PrivateVar[];
+  /** 
+   * Context paths at each nesting level for ../ navigation.
+   * Index 0 = root context (''), each subsequent index is the path after that block's context switch.
+   * Length = blocks.length + 1 (includes root)
+   */
+  parentContextPaths: string[];
 }
 
 /**
@@ -184,6 +190,7 @@ export function getBlockContextAtPosition(
     availablePrivateVars: [
       { name: '@root', desc: 'Access root context' },
     ],
+    parentContextPaths: [''],  // Start with root context
   };
 
   // Parse all opening tags
@@ -207,6 +214,11 @@ export function getBlockContextAtPosition(
       continue;
     }
 
+    if (endOfOpenTag > cursorPos) {
+      // Cursor is inside the opening tag, skip
+      continue;
+    }
+
     // This block encloses the cursor
     const helper = getHelperByName(tag.helperName);
     enclosingBlocks.push({
@@ -224,9 +236,13 @@ export function getBlockContextAtPosition(
   result.blocks = enclosingBlocks;
 
   // Resolve the context path by following all context switches
+  // Build parentContextPaths: [root, afterBlock1, afterBlock2, ...]
+  const parentContextPaths: string[] = [''];  // Start with root context
   let contextPath = '';
+
   for (const block of enclosingBlocks) {
     contextPath = resolveContextPath(contextPath, block.param, block.helper, data);
+    parentContextPaths.push(contextPath);
 
     // Collect private variables from this block
     if (block.helper?.privateVars) {
@@ -235,6 +251,7 @@ export function getBlockContextAtPosition(
   }
 
   result.currentPath = contextPath;
+  result.parentContextPaths = parentContextPaths;
 
   return result;
 }
@@ -261,4 +278,29 @@ export function getDataAtContext(data: unknown, contextPath: string): unknown {
   }
 
   return getValueAtPath(data, contextPath);
+}
+
+/**
+ * Get the context path for a given number of parent levels up.
+ * 
+ * @param contextStack - The current context stack
+ * @param parentLevels - Number of ../ levels to go up (0 = current, 1 = parent, etc.)
+ * @returns The resolved context path, or current path if parentLevels exceeds available parents
+ */
+export function getParentContextPath(
+  contextStack: ContextStack,
+  parentLevels: number
+): string {
+  if (parentLevels <= 0) {
+    return contextStack.currentPath;
+  }
+
+  // parentContextPaths: [root, afterBlock1, afterBlock2, ..., current]
+  // To go up N levels from current, we want index = length - 1 - N
+  const targetIndex = contextStack.parentContextPaths.length - 1 - parentLevels;
+
+  // Clamp to valid range (at minimum, return root context)
+  const clampedIndex = Math.max(0, targetIndex);
+
+  return contextStack.parentContextPaths[clampedIndex] ?? '';
 }

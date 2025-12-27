@@ -148,9 +148,335 @@ export const CUSTOM_HELPERS: HelperDefinition[] = [
 ];
 
 /**
+ * just-handlebars-helpers - Conditional helpers
+ */
+export const JHH_CONDITIONAL_HELPERS: HelperDefinition[] = [
+  {
+    name: 'eq',
+    type: 'inline',
+    description: 'Strict equality (===)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'eqw',
+    type: 'inline',
+    description: 'Weak equality (==)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'neq',
+    type: 'inline',
+    description: 'Strict inequality (!==)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'neqw',
+    type: 'inline',
+    description: 'Weak inequality (!=)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'lt',
+    type: 'inline',
+    description: 'Less than (<)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'lte',
+    type: 'inline',
+    description: 'Less than or equal (<=)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'gt',
+    type: 'inline',
+    description: 'Greater than (>)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'gte',
+    type: 'inline',
+    description: 'Greater than or equal (>=)',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'not',
+    type: 'inline',
+    description: 'Logical NOT (!)',
+    params: [{ name: 'expression', type: 'any', required: true, desc: 'Expression to negate' }],
+  },
+  {
+    name: 'ifx',
+    type: 'inline',
+    description: 'Ternary conditional (?:)',
+    params: [
+      { name: 'condition', type: 'boolean', required: true, desc: 'Condition to evaluate' },
+      { name: 'trueValue', type: 'any', required: true, desc: 'Value if true' },
+      { name: 'falseValue', type: 'any', required: false, desc: 'Value if false (default: empty string)' },
+    ],
+  },
+  {
+    name: 'empty',
+    type: 'inline',
+    description: 'Check if array is empty',
+    params: [{ name: 'array', type: 'array', required: true, desc: 'Array to check' }],
+  },
+  {
+    name: 'count',
+    type: 'inline',
+    description: 'Get array length',
+    params: [{ name: 'array', type: 'array', required: true, desc: 'Array to count' }],
+  },
+  {
+    name: 'and',
+    type: 'inline',
+    description: 'Logical AND of all parameters',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'or',
+    type: 'inline',
+    description: 'Logical OR of all parameters',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'coalesce',
+    type: 'inline',
+    description: 'Returns first non-falsy value',
+    params: [
+      { name: 'value1', type: 'any', required: true, desc: 'First value' },
+      { name: 'value2', type: 'any', required: true, desc: 'Second value' },
+    ],
+  },
+  {
+    name: 'includes',
+    type: 'inline',
+    description: 'Check if array includes value',
+    params: [
+      { name: 'array', type: 'array', required: true, desc: 'Array to search' },
+      { name: 'value', type: 'any', required: true, desc: 'Value to find' },
+      { name: 'strict', type: 'boolean', required: false, desc: 'Use strict comparison (default: true)' },
+    ],
+  },
+];
+
+/**
+ * just-handlebars-helpers - String helpers
+ */
+export const JHH_STRING_HELPERS: HelperDefinition[] = [
+  {
+    name: 'excerpt',
+    type: 'inline',
+    description: 'Extract substring with ellipsis',
+    params: [
+      { name: 'string', type: 'string', required: true, desc: 'Source string' },
+      { name: 'length', type: 'number', required: false, desc: 'Max length (default: 50)' },
+    ],
+  },
+  {
+    name: 'sanitize',
+    type: 'inline',
+    description: 'Convert string to URL-friendly dash-case',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String to sanitize' }],
+  },
+  {
+    name: 'newLineToBr',
+    type: 'inline',
+    description: 'Replace \\n with <br> tags',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String with newlines' }],
+  },
+  {
+    name: 'capitalizeEach',
+    type: 'inline',
+    description: 'Capitalize first letter of each word',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String to capitalize' }],
+  },
+  {
+    name: 'capitalizeFirst',
+    type: 'inline',
+    description: 'Capitalize first letter of string',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String to capitalize' }],
+  },
+  {
+    name: 'lowercase',
+    type: 'inline',
+    description: 'Convert string to lowercase',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String to convert' }],
+  },
+  {
+    name: 'uppercase',
+    type: 'inline',
+    description: 'Convert string to uppercase',
+    params: [{ name: 'string', type: 'string', required: true, desc: 'String to convert' }],
+  },
+  {
+    name: 'first',
+    type: 'inline',
+    description: 'Get first element of array',
+    params: [{ name: 'array', type: 'array', required: true, desc: 'Source array' }],
+  },
+  {
+    name: 'last',
+    type: 'inline',
+    description: 'Get last element of array',
+    params: [{ name: 'array', type: 'array', required: true, desc: 'Source array' }],
+  },
+  {
+    name: 'concat',
+    type: 'inline',
+    description: 'Concatenate strings',
+    params: [
+      { name: 'string1', type: 'string', required: true, desc: 'First string' },
+      { name: 'string2', type: 'string', required: true, desc: 'Second string' },
+    ],
+  },
+  {
+    name: 'join',
+    type: 'inline',
+    description: 'Join array elements with delimiter',
+    params: [
+      { name: 'array', type: 'array', required: true, desc: 'Array to join' },
+      { name: 'delimiter', type: 'string', required: true, desc: 'Delimiter string' },
+    ],
+  },
+];
+
+/**
+ * just-handlebars-helpers - Math helpers
+ */
+export const JHH_MATH_HELPERS: HelperDefinition[] = [
+  {
+    name: 'sum',
+    type: 'inline',
+    description: 'Add two numbers',
+    params: [
+      { name: 'value1', type: 'number', required: true, desc: 'First number' },
+      { name: 'value2', type: 'number', required: true, desc: 'Second number' },
+    ],
+  },
+  {
+    name: 'difference',
+    type: 'inline',
+    description: 'Subtract two numbers',
+    params: [
+      { name: 'value1', type: 'number', required: true, desc: 'First number' },
+      { name: 'value2', type: 'number', required: true, desc: 'Second number' },
+    ],
+  },
+  {
+    name: 'multiplication',
+    type: 'inline',
+    description: 'Multiply two numbers',
+    params: [
+      { name: 'value1', type: 'number', required: true, desc: 'First number' },
+      { name: 'value2', type: 'number', required: true, desc: 'Second number' },
+    ],
+  },
+  {
+    name: 'division',
+    type: 'inline',
+    description: 'Divide two numbers',
+    params: [
+      { name: 'value1', type: 'number', required: true, desc: 'Dividend' },
+      { name: 'value2', type: 'number', required: true, desc: 'Divisor' },
+    ],
+  },
+  {
+    name: 'remainder',
+    type: 'inline',
+    description: 'Get remainder of division (modulo)',
+    params: [
+      { name: 'value1', type: 'number', required: true, desc: 'Dividend' },
+      { name: 'value2', type: 'number', required: true, desc: 'Divisor' },
+    ],
+  },
+  {
+    name: 'ceil',
+    type: 'inline',
+    description: 'Round up to nearest integer',
+    params: [{ name: 'value', type: 'number', required: true, desc: 'Number to round' }],
+  },
+  {
+    name: 'floor',
+    type: 'inline',
+    description: 'Round down to nearest integer',
+    params: [{ name: 'value', type: 'number', required: true, desc: 'Number to round' }],
+  },
+  {
+    name: 'abs',
+    type: 'inline',
+    description: 'Get absolute value',
+    params: [{ name: 'value', type: 'number', required: true, desc: 'Number' }],
+  },
+];
+
+/**
+ * just-handlebars-helpers - DateTime & Formatter helpers
+ */
+export const JHH_FORMATTER_HELPERS: HelperDefinition[] = [
+  {
+    name: 'formatDate',
+    type: 'inline',
+    description: 'Format date using moment.js',
+    params: [
+      { name: 'format', type: 'string', required: true, desc: 'Format string (e.g. MM/DD/YYYY)' },
+      { name: 'date', type: 'date', required: false, desc: 'Date to format (default: now)' },
+      { name: 'locale', type: 'string', required: false, desc: 'Locale code (e.g. en, es)' },
+    ],
+  },
+  {
+    name: 'formatCurrency',
+    type: 'inline',
+    description: 'Format currency value',
+    params: [{ name: 'value', type: 'number', required: true, desc: 'Currency amount' }],
+    hashParams: [
+      { name: 'code', type: 'string', desc: 'Currency code (e.g. USD, EUR)' },
+      { name: 'locale', type: 'string', desc: 'Locale for formatting' },
+    ],
+  },
+];
+
+/**
  * All helpers combined
  */
-export const ALL_HELPERS: HelperDefinition[] = [...BUILTIN_HELPERS, ...CUSTOM_HELPERS];
+export const ALL_HELPERS: HelperDefinition[] = [
+  ...BUILTIN_HELPERS,
+  ...CUSTOM_HELPERS,
+  ...JHH_CONDITIONAL_HELPERS,
+  ...JHH_STRING_HELPERS,
+  ...JHH_MATH_HELPERS,
+  ...JHH_FORMATTER_HELPERS,
+];
 
 /**
  * Get block helpers only

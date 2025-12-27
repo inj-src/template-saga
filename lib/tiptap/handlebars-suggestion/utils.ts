@@ -35,7 +35,7 @@ export function handleHelperSelect(
    }
 }
 
-export function parseQueryContext(query: string): ExpressionContext {
+export function parseQueryContext(query: string, basePath: string = ''): ExpressionContext {
    const trimmed = query.trimStart();
 
    // Check for block helper context (starts with #)
@@ -49,13 +49,14 @@ export function parseQueryContext(query: string): ExpressionContext {
          const paramQuery = afterHash.slice(spaceIndex + 1).trim();
 
          // Parse the param query for path navigation
-         const parsed = parseExpressionText(paramQuery);
+         const parsed = parseExpressionText(paramQuery, basePath);
 
          return {
             type: 'blockHelperParam',
             helperName,
             query: parsed.query,
             basePath: parsed.basePath,
+            parentLevels: parsed.parentLevels,
          };
       }
 
@@ -64,6 +65,7 @@ export function parseQueryContext(query: string): ExpressionContext {
          type: 'blockHelper',
          query: afterHash,
          basePath: '',
+         parentLevels: 0,
       };
    }
 
@@ -73,15 +75,17 @@ export function parseQueryContext(query: string): ExpressionContext {
          type: 'privateVar',
          query: trimmed.slice(1), // Remove @
          basePath: '',
+         parentLevels: 0,
       };
    }
 
    // Regular field or helper
    const parsed = parseExpressionText(trimmed);
    return {
-      type: parsed.basePath ? 'field' : 'all', // If there's a path, it's field navigation
+      type: parsed.basePath || parsed.parentLevels > 0 ? 'field' : 'all', // If there's a path or parent nav, it's field navigation
       query: parsed.query,
       basePath: parsed.basePath,
+      parentLevels: parsed.parentLevels,
    };
 }
 
@@ -103,17 +107,21 @@ export function handlePrivateVarSelect(editor: Editor,
 export function handleFieldSelect(editor: Editor,
    range: Range,
    suggestion: FieldSuggestion,
-   basePath: string) {
+   basePath: string,
+   parentLevels: number = 0) {
    const $position = editor.state.selection.$from;
    const textAfterCursor = $position.parent.textContent.slice($position.parentOffset);
    const nextCloseBrace = textAfterCursor.indexOf("}}");
    const from = $position.pos;
    const to = from + nextCloseBrace;
 
+   // Build the ../ prefix for parent context navigation
+   const parentPrefix = '../'.repeat(parentLevels);
+
    if (suggestion.type === "object" && isNestedObject(suggestion.value)) {
       const insertText = basePath
-         ? `{{${basePath}.${suggestion.name}.`
-         : `{{${suggestion.name}.`;
+         ? `{{${parentPrefix}${basePath}.${suggestion.name}.`
+         : `{{${parentPrefix}${suggestion.name}.`;
 
       editor
          .chain()
@@ -125,7 +133,7 @@ export function handleFieldSelect(editor: Editor,
    }
 
    const insertPath = formatFieldPath(suggestion);
-   const fullText = `{{${insertPath}`;
+   const fullText = `{{${parentPrefix}${insertPath}`;
 
    editor
       .chain()

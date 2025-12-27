@@ -104,36 +104,55 @@ export function formatFieldPath(suggestion: FieldSuggestion): string {
  * @param expressionText - Text inside the {{ }} (e.g., "user.add" or "")
  * @returns Object with basePath (completed path) and query (partial filter)
  */
-export function parseExpressionText(expressionText: string): {
+export function parseExpressionText(expressionText: string, basePath: string = ''): {
   basePath: string;
   query: string;
+  /** Number of ../ prefixes found (parent context navigation) */
+  parentLevels: number;
 } {
   const trimmed = expressionText.trim();
   
   if (!trimmed) {
-    return { basePath: '', query: '' };
+    return { basePath: '', query: '', parentLevels: 0 };
+  }
+
+  // Count and strip ../ prefixes for parent context navigation
+  let parentLevels = 0;
+  let remaining = trimmed;
+
+  while (remaining.startsWith('../')) {
+    parentLevels++;
+    remaining = remaining.slice(3); // Remove '../'
+  }
+
+  // Handle edge case where we just have '../' with nothing after
+  if (remaining === '' || remaining === '.') {
+    return { basePath: '', query: '', parentLevels };
   }
 
   // Check if ends with dot (user is navigating into object)
-  if (trimmed.endsWith('.')) {
+  if (remaining.endsWith('.')) {
     return {
-      basePath: trimmed.slice(0, -1),
+      basePath: remaining.slice(0, -1),
       query: '',
+      parentLevels,
     };
   }
 
   // Has a dot - split into basePath and query
-  const lastDotIndex = trimmed.lastIndexOf('.');
+  const lastDotIndex = remaining.lastIndexOf('.');
   if (lastDotIndex !== -1) {
     return {
-      basePath: trimmed.slice(0, lastDotIndex),
-      query: trimmed.slice(lastDotIndex + 1),
+      basePath: remaining.slice(0, lastDotIndex),
+      query: remaining.slice(lastDotIndex + 1),
+      parentLevels,
     };
   }
 
   // No dot - just a filter query on root level
   return {
-    basePath: '',
-    query: trimmed,
+    basePath: basePath,
+    query: remaining,
+    parentLevels,
   };
 }

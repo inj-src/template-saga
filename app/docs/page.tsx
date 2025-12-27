@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, Book, Code, Calculator, Table as TableIcon, Info, Terminal } from "lucide-react";
+import { ChevronLeft, Book, Code, Calculator, Table as TableIcon, Terminal, Type, Equal, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -28,7 +28,7 @@ const CodeBlock = ({ code, language = "handlebars" }: { code: string; language?:
    );
 };
 
-const Section = ({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) => (
+const Section = ({ title, icon: Icon, children }: { title: string; icon: React.FC<Record<string, string>>; children: React.ReactNode }) => (
    <section className="space-y-6">
       <div className="flex items-center gap-3">
          <div className="p-2 rounded-md bg-primary/10 text-primary">
@@ -167,6 +167,9 @@ export default function DocsPage() {
                   <TabsTrigger value="custom" className="px-6 data-[state=active]:bg-background data-[state=active]:shadow-sm">
                      Custom Helpers
                   </TabsTrigger>
+                  <TabsTrigger value="utility" className="px-6 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                     Utility Helpers
+                  </TabsTrigger>
                   <TabsTrigger value="builtin" className="px-6 data-[state=active]:bg-background data-[state=active]:shadow-sm">
                      Built-in Helpers
                   </TabsTrigger>
@@ -237,6 +240,197 @@ export default function DocsPage() {
                      />
                   </Section>
 
+               </TabsContent>
+
+               <TabsContent value="utility" className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 mb-8">
+                     <div className="flex items-center gap-2 text-blue-800">
+                        <Code className="w-5 h-5" />
+                        <span className="font-semibold">Powered by just-handlebars-helpers</span>
+                     </div>
+                     <p className="text-sm text-blue-700 mt-1">
+                        These helpers are provided by the <a href="https://github.com/leapfrogtechnology/just-handlebars-helpers" className="underline" target="_blank" rel="noreferrer">just-handlebars-helpers</a> library.
+                     </p>
+                  </div>
+
+                  <Section title="Conditional Helpers" icon={Equal}>
+                     <HelperDoc
+                        name="eq"
+                        description="Strict equality comparison (===). Returns true if both values are strictly equal."
+                        usage={`{{eq value1 value2}}
+{{#if (eq status 'active')}}Active{{/if}}`}
+                        parameters={[
+                           { name: "value1", type: "any", desc: "First value to compare" },
+                           { name: "value2", type: "any", desc: "Second value to compare" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="neq"
+                        description="Strict inequality comparison (!==). Returns true if values are not strictly equal."
+                        usage={`{{neq value1 value2}}
+{{#if (neq type 'draft')}}Published{{/if}}`}
+                        parameters={[
+                           { name: "value1", type: "any", desc: "First value to compare" },
+                           { name: "value2", type: "any", desc: "Second value to compare" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="lt / lte / gt / gte"
+                        description="Numeric comparison helpers: less than, less than or equal, greater than, greater than or equal."
+                        usage={`{{lt 5 10}}  → true
+{{lte 5 5}}  → true
+{{gt 10 5}}  → true
+{{gte 5 5}}  → true`}
+                     />
+                     <HelperDoc
+                        name="and / or / not"
+                        description="Logical operators for combining conditions."
+                        usage={`{{#if (and isActive isPublished)}}Show{{/if}}
+{{#if (or isAdmin isModerator)}}Access granted{{/if}}
+{{#if (not isHidden)}}Visible{{/if}}`}
+                     />
+                     <HelperDoc
+                        name="ifx"
+                        description="Ternary conditional operator (?:). Returns one value if true, another if false."
+                        usage={`{{ifx isActive 'Active' 'Inactive'}}
+{{ifx (gt score 50) 'Pass' 'Fail'}}`}
+                        parameters={[
+                           { name: "condition", type: "boolean", desc: "Condition to evaluate" },
+                           { name: "trueValue", type: "any", desc: "Value if condition is true" },
+                           { name: "falseValue", type: "any", desc: "Value if condition is false (optional)" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="empty / count"
+                        description="Array utility helpers for checking emptiness and getting length."
+                        usage={`{{#if (empty items)}}No items{{/if}}
+Total: {{count items}} items`}
+                     />
+                     <HelperDoc
+                        name="includes"
+                        description="Check if an array contains a specific value."
+                        usage={`{{#if (includes roles 'admin')}}Admin Access{{/if}}`}
+                        parameters={[
+                           { name: "array", type: "array", desc: "Array to search" },
+                           { name: "value", type: "any", desc: "Value to find" },
+                           { name: "strict", type: "boolean", desc: "Use strict comparison (default: true)" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="coalesce"
+                        description="Returns the first non-falsy value from the parameters. Similar to SQL COALESCE."
+                        usage={`{{coalesce nickname firstName 'Anonymous'}}`}
+                     />
+                  </Section>
+
+                  <Section title="String Helpers" icon={Type}>
+                     <HelperDoc
+                        name="uppercase / lowercase"
+                        description="Convert string to uppercase or lowercase."
+                        usage={`{{uppercase 'hello'}} → HELLO
+{{lowercase 'WORLD'}} → world`}
+                     />
+                     <HelperDoc
+                        name="capitalizeFirst / capitalizeEach"
+                        description="Capitalize first letter of string or first letter of each word."
+                        usage={`{{capitalizeFirst 'hello world'}} → Hello world
+{{capitalizeEach 'hello world'}} → Hello World`}
+                     />
+                     <HelperDoc
+                        name="concat"
+                        description="Concatenate multiple strings together."
+                        usage={`{{concat firstName ' ' lastName}}
+{{concat 'Hello' ' ' 'World' '!'}}`}
+                     />
+                     <HelperDoc
+                        name="join"
+                        description="Join array elements with a delimiter."
+                        usage={`{{join tags ', '}}
+{{join names ' & '}}`}
+                        parameters={[
+                           { name: "array", type: "array", desc: "Array to join" },
+                           { name: "delimiter", type: "string", desc: "Separator string" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="first / last"
+                        description="Get the first or last element of an array."
+                        usage={`{{first items}}
+{{last items}}`}
+                     />
+                     <HelperDoc
+                        name="excerpt"
+                        description="Extract a substring with ellipsis."
+                        usage={`{{excerpt description 100}}`}
+                        parameters={[
+                           { name: "string", type: "string", desc: "Source string" },
+                           { name: "length", type: "number", desc: "Max length (default: 50)" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="sanitize"
+                        description="Convert string to URL-friendly dash-case (kebab-case)."
+                        usage={`{{sanitize 'Hello World!'}} → hello-world`}
+                     />
+                     <HelperDoc
+                        name="newLineToBr"
+                        description="Replace newline characters with <br> tags. Use triple braces to prevent escaping."
+                        usage={`{{{newLineToBr multilineText}}}`}
+                     />
+                  </Section>
+
+                  <Section title="Math Helpers" icon={Hash}>
+                     <HelperDoc
+                        name="sum / difference"
+                        description="Add or subtract two numbers."
+                        usage={`{{sum 10 5}}        → 15
+{{difference 10 3}} → 7`}
+                     />
+                     <HelperDoc
+                        name="multiplication / division"
+                        description="Multiply or divide two numbers."
+                        usage={`{{multiplication 5 4}} → 20
+{{division 20 4}}      → 5`}
+                     />
+                     <HelperDoc
+                        name="remainder"
+                        description="Get the remainder of division (modulo)."
+                        usage={`{{remainder 10 3}} → 1`}
+                     />
+                     <HelperDoc
+                        name="ceil / floor / abs"
+                        description="Math rounding and absolute value functions."
+                        usage={`{{ceil 4.2}}  → 5
+{{floor 4.8}} → 4
+{{abs -5}}    → 5`}
+                     />
+                  </Section>
+
+                  <Section title="Formatters" icon={Code}>
+                     <HelperDoc
+                        name="formatDate"
+                        description="Format a date using moment.js format strings."
+                        usage={`{{formatDate 'YYYY-MM-DD' date}}
+{{formatDate 'MMMM Do, YYYY' createdAt}}
+{{formatDate 'LLLL' date 'es'}}`}
+                        parameters={[
+                           { name: "format", type: "string", desc: "Moment.js format string (e.g. MM/DD/YYYY)" },
+                           { name: "date", type: "date", desc: "Date to format (default: now)" },
+                           { name: "locale", type: "string", desc: "Locale code (e.g. en, es)" }
+                        ]}
+                     />
+                     <HelperDoc
+                        name="formatCurrency"
+                        description="Format a number as currency."
+                        usage={`{{formatCurrency 1234.50 code='USD'}}
+{{formatCurrency price code='EUR' locale='de'}}`}
+                        parameters={[
+                           { name: "value", type: "number", desc: "Currency amount" },
+                           { name: "code", type: "string", desc: "Currency code (USD, EUR, etc.)" },
+                           { name: "locale", type: "string", desc: "Locale for formatting" }
+                        ]}
+                     />
+                  </Section>
                </TabsContent>
 
                <TabsContent value="builtin" className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">

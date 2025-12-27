@@ -2,6 +2,8 @@
 import Handlebars from "handlebars";
 import { parse, type HTMLElement as NodeHTMLElement } from "node-html-parser";
 import * as parseNumber from "multi-number-parse";
+import * as H from "just-handlebars-helpers";
+
 
 export function registerAccumulateHelper() {
   const parse = parseNumber.default;
@@ -261,8 +263,18 @@ export function registerHandleMissingHelper() {
   });
 }
 
+/**
+ * Register just-handlebars-helpers
+ * @see https://github.com/leapfrogtechnology/just-handlebars-helpers
+ */
+export function registerJustHandlebarsHelpers() {
+  H.registerHelpers(Handlebars);
+}
+
 export function registerAllHelpers() {
   registerAccumulateHelper();
   registerTableHelper();
   registerHandleMissingHelper();
+  registerJustHandlebarsHelpers();
 }
+

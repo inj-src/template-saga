@@ -19,7 +19,7 @@ import {
    type PrivateVar,
 } from "@/lib/tiptap/handlebars-suggestion/helper-definitions";
 import { handleFieldSelect, handleHelperSelect, handlePrivateVarSelect, parseQueryContext } from "./utils";
-import { getBlockContextAtPosition, getDataAtContext } from "./block-context";
+import { getBlockContextAtPosition, getDataAtContext, getParentContextPath } from "./block-context";
 import { SuggestionMatch, Trigger } from "@tiptap/suggestion";
 
 // Icons
@@ -152,6 +152,7 @@ export function HandlebarsSuggestion({
       const cursorPos = suggestionEditor.state.selection.from;
       const blockContext = getBlockContextAtPosition(fullText, cursorPos, JSONData);
 
+      // That .at(-2) is some monkey patching :) as .at(-1) returns the current path on not base path
       const context = parseQueryContext(query);
       const items: AnySuggestionItem[] = [];
 
@@ -185,11 +186,22 @@ export function HandlebarsSuggestion({
       if (context.type === 'blockHelperParam' && context.helperName) {
          const helper = getHelperByName(context.helperName);
 
+         const parentLevels = context.parentLevels ?? 0;
+         const targetContextPath = parentLevels > 0
+            ? getParentContextPath(blockContext, parentLevels)
+            : blockContext.currentPath;
+
+         // Get the effective data at the target context
+
          // Get field suggestions, filtering by helper's expected data type
          if (JSONData !== null && JSONData !== undefined) {
-            const allFieldSuggestions = getSuggestionsAtPath(JSONData, context.basePath);
+            const contextualData = targetContextPath
+               ? getDataAtContext(JSONData, targetContextPath)
+               : JSONData;
 
-            // Filter by expected data type if helper specifies one
+            const allFieldSuggestions = getSuggestionsAtPath(contextualData, context.basePath);
+
+            // Filter by expected data type if helper specifies one -
             const typeFilteredSuggestions = helper?.expectedDataType
                ? allFieldSuggestions.filter((s) => {
                   if (helper.expectedDataType === 'array') return s.type === 'array';
@@ -260,15 +272,22 @@ export function HandlebarsSuggestion({
 
       // Field suggestions - use context-aware data based on enclosing block helpers
       if (context.type === 'field' || context.type === 'all') {
-         // Get the effective data at the current block context
-         const contextualData = blockContext.currentPath
-            ? getDataAtContext(JSONData, blockContext.currentPath)
+         // Resolve the target context path (handles ../ parent navigation)
+         const parentLevels = context.parentLevels ?? 0;
+         const targetContextPath = parentLevels > 0
+            ? getParentContextPath(blockContext, parentLevels)
+            : blockContext.currentPath;
+
+         // Get the effective data at the target context
+         const contextualData = targetContextPath
+            ? getDataAtContext(JSONData, targetContextPath)
             : JSONData;
 
          // Only show field suggestions if we have data to work with
          if (contextualData !== null && contextualData !== undefined) {
             const allFieldSuggestions = getSuggestionsAtPath(contextualData, context.basePath);
-         const filteredFields = context.query
+
+            const filteredFields = context.query
             ? allFieldSuggestions.filter((s) =>
                s.name.toLowerCase().startsWith(context.query.toLowerCase())
             )
@@ -281,7 +300,7 @@ export function HandlebarsSuggestion({
                category: 'field',
                fieldData: suggestion,
                onSelect: ({ editor, range }) => {
-                  handleFieldSelect(editor, range, suggestion, context.basePath);
+                  handleFieldSelect(editor, range, suggestion, context.basePath, parentLevels);
                },
             }))
          );
