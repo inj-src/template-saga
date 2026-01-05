@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, Upload, Printer, SquarePen, BookOpen } from "lucide-react";
+import { Tabs, } from "@/components/ui/tabs";
+import { Upload, Printer, BookOpen } from "lucide-react";
 import { Preview } from "./preview";
-import { Edit } from "./edit";
+// import { Edit } from "./edit";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import Link from "next/link";
@@ -81,7 +81,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
           </Button>
 
 
-          <TabsList className="mx-auto">
+          {/* <TabsList className="mx-auto">
             <TabsTrigger value="preview" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />
               Preview
@@ -94,7 +94,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
               <SquarePen className="w-4 h-4" />
               Edit
             </TabsTrigger>
-          </TabsList>
+          </TabsList> */}
           <div className="flex items-center gap-2">
             <Link href="/docs">
               <Button size={"icon"} variant={"secondary"} title="Help & Documentation">
@@ -120,17 +120,17 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
           </div>
         </div>
 
-        <TabsContent value="preview">
           <Preview
             data={data}
             htmlString={htmlString}
             handleFileUpload={() => fileInputRef.current?.click()}
           />
-        </TabsContent>
+        {/* <TabsContent value="preview">
+        </TabsContent> */}
 
-        <TabsContent value="edit">
+        {/* <TabsContent value="edit">
           <Edit htmlString={htmlString} setHtmlString={setHtmlString} data={data} />
-        </TabsContent>
+        </TabsContent> */}
       </div>
     </Tabs>
   );
