@@ -15,14 +15,16 @@ import td from './td';
 import tr from './tr';
 import tbody from './tbody';
 import wbr from './wbr';
-import br from './br';
-import li from './li';
-import ol from './ol';
-import paragraph from './paragraph';
+
+import svg from './svg';
+import g from './g';
+import foreignObject from './foreignObject';
+import path from './path';
 
 export const nodes = [
    article, div, footer, header, section, col, colgroup,
    img, span, style, sub, sup, tbody, wbr,
-   table, td, tr
+   table, td, tr,
+   svg, g, foreignObject, path
 ]
 export const NODE_NAMES = nodes.map((node) => node.name)

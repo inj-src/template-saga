@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -18,35 +19,51 @@ import JSONView from "./jsonView";
 import { DocumentPanel } from "./document-panel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDataStore } from "./store/useDataStore";
-import { allDataSets, DataSetKey } from "./dummy-data";
+import { AddOptionsDialog } from "./AddOptionsDialog";
 
 export default function Home() {
-  const { selectedDataKey, selectedData, setSelectedDataKey } = useDataStore();
+  const {
+    selectedDataKey,
+    selectedData,
+    selectedTemplateHtml,
+    setSelectedDataKey,
+    getAllDataSets,
+    loadCustomDataSets,
+  } = useDataStore();
+
+  useEffect(() => {
+    loadCustomDataSets();
+  }, [loadCustomDataSets]);
+
+  const dataSets = getAllDataSets();
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={true}>
       {/* <div className="flex w-full"> */}
       <Sidebar side="left" className="bg-[#f6f5f5] border-r overflow-auto">
         <SidebarHeader>
           <div className="flex justify-between">
-            <h2 className="mx-2 font-semibold text-lg">JSON Data</h2>
+            <h2 className="mx-2 font-semibold text-lg font-mono">JSON Data</h2>
             <SidebarTrigger />
           </div>
-          <Select
-            value={selectedDataKey}
-            onValueChange={(value) => setSelectedDataKey(value as DataSetKey)}
-          >
-            <SelectTrigger className="bg-background w-full">
-              <SelectValue placeholder="Select JSON data" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(allDataSets).map(([key, { label }]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select
+              value={selectedDataKey}
+              onValueChange={(value) => setSelectedDataKey(value)}
+            >
+              <SelectTrigger className="bg-background w-full">
+                <SelectValue placeholder="Select JSON data" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(dataSets).map(([key, { label }]) => (
+                  <SelectItem key={key} value={key}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <AddOptionsDialog />
+          </div>
         </SidebarHeader>
         <SidebarContent>
           <JSONView data={selectedData} />
@@ -54,7 +71,7 @@ export default function Home() {
       </Sidebar>
       <SidebarInset>
         <ScrollArea className="h-screen">
-          <DocumentPanel data={selectedData} />
+          <DocumentPanel data={selectedData} initialTemplateHtml={selectedTemplateHtml} />
         </ScrollArea>
       </SidebarInset>
       {/* </div> */}

@@ -1,7 +1,6 @@
 import { registerAllHelpers } from "@/lib/handlebars/helpers";
 import { FileText } from "lucide-react";
 import Handlebars from "handlebars";
-// import { processTemplateExpressions } from "@/lib/utils";
 
 registerAllHelpers();
 
@@ -17,7 +16,6 @@ export function Preview({
   let templateString = "";
 
   try {
-    // const processedHTML = processTemplateExpressions(innerHTML);
     const template = Handlebars.compile(htmlString || "");
     templateString = template(data);
   } catch (error) {

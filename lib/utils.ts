@@ -9,8 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function getHTMLStringFromParsedDoc(file: File): Promise<string> {
   const container = document.createElement("div");
-  // await renderAsync(file, container, styleContainer, { inWrapper: false });
-  await renderAsync(file, container, undefined, { inWrapper: false });
+  await renderAsync(file, container, undefined, { inWrapper: false, useBase64URL: true });
   return purifyTemplate(container.innerHTML);
 }
 

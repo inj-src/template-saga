@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,11 +11,19 @@ import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import Link from "next/link";
 
-export function DocumentPanel({ data }: { data: unknown }) {
-  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [parsedDoc, setParsedDoc] = useState<Record<string, unknown> | null>(null);
-  const [htmlString, setHtmlString] = useState<string | null>(null);
+interface DocumentPanelProps {
+  data: unknown;
+  initialTemplateHtml: string | null;
+}
+
+export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps) {
+  const [htmlString, setHtmlString] = useState<string | null>(initialTemplateHtml);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync with initialTemplateHtml when a dataset with template is selected
+  useEffect(() => {
+    setHtmlString(initialTemplateHtml);
+  }, [initialTemplateHtml]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const docxExt = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -42,7 +50,7 @@ export function DocumentPanel({ data }: { data: unknown }) {
 
   return (
     <Tabs
-      defaultValue="preview"
+      value={activeTab}
       onValueChange={(value) => setActiveTab(value as "preview" | "edit")}
     >
       <div className="flex flex-col gap-4 w-full h-full">
@@ -56,14 +64,22 @@ export function DocumentPanel({ data }: { data: unknown }) {
             onChange={handleFileChange}
             className="hidden"
           />
+
+
           <Button
             size={"icon"}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (activeTab === "edit") {
+                setActiveTab('preview')
+              }
+              fileInputRef.current?.click()
+            }}
             variant={htmlString ? "secondary" : "default"}
+            title={"Upload Document"}
           >
-            {/* Upload Document */}
             <Upload />
           </Button>
+
 
           <TabsList className="mx-auto">
             <TabsTrigger value="preview" className="flex items-center gap-2">
@@ -87,9 +103,17 @@ export function DocumentPanel({ data }: { data: unknown }) {
             </Link>
             <Button
               size={"icon"}
+              title="Print Preview"
               variant={"secondary"}
-              onClick={printPreview}
-              disabled={!htmlString || activeTab !== "preview"}
+              onClick={() => {
+                if (activeTab === "edit") {
+                  setActiveTab('preview')
+                  setTimeout(printPreview, 100)
+                } else {
+                  printPreview()
+                }
+              }}
+              disabled={!htmlString}
             >
               <Printer />
             </Button>
