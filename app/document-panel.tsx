@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
 import { Upload, Printer, BookOpen, Eye, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
-// import { Edit } from "./edit";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 import Link from "next/link";
 
 
@@ -21,7 +20,6 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
   const [htmlString, setHtmlString] = useState<string | null>(initialTemplateHtml);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync with initialTemplateHtml when a dataset with template is selected
   useEffect(() => {
     setHtmlString(initialTemplateHtml);
   }, [initialTemplateHtml]);
@@ -39,14 +37,17 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
 
   const parseDocx = async (file: File) => {
     try {
-      // Parse the docx file using parseAsync
       const htmlString = await getHTMLStringFromParsedDoc(file);
       setHtmlString(htmlString);
     } catch (error) {
       console.error("Error parsing docx:", error);
     }
   };
-  const sidebar = useSidebar();
+  // const sidebar = useSidebar();
+  const manager = useSidebarManager();
+  const leftSidebar = manager.use("left");
+  const rightSidebar = manager.use("right");
+
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
 
   return (
@@ -56,7 +57,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
     >
       <div className="flex flex-col gap-4 w-full h-full">
         <div className="top-0 z-10 sticky flex items-center gap-4 bg-white px-4 py-2 border-gray-300 border-b">
-          {!sidebar.open && <SidebarTrigger />}
+          {!leftSidebar?.open && <SidebarManagerTrigger name="left" />}
 
           <Input
             ref={fileInputRef}
@@ -118,6 +119,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
             >
               <Printer />
             </Button>
+            {!rightSidebar?.open && <SidebarManagerTrigger name="right" />}
           </div>
         </div>
         <Preview

@@ -39,6 +39,7 @@ type SidebarContextProps = {
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
 
+
 function useSidebar() {
   const context = React.useContext(SidebarContext);
   if (!context) {
@@ -47,6 +48,112 @@ function useSidebar() {
 
   return context;
 }
+
+// A record to hold the sidebar context for each named sidebar
+type SidebarRegistry = Record<string, SidebarContextProps>;
+
+type SidebarManagerContextProps = {
+  register: (name: string, context: SidebarContextProps) => void;
+  unregister: (name: string) => void;
+  use: (name: string) => SidebarContextProps | null;
+};
+
+const SidebarManagerContext = React.createContext<SidebarManagerContextProps | null>(null);
+
+function useSidebarManager() {
+  const context = React.useContext(SidebarManagerContext);
+  if (!context) {
+    throw new Error("useSidebarManager must be used within a SidebarManagerProvider.");
+  }
+  return context;
+}
+
+function SidebarManagerProvider({ children }: { children: React.ReactNode }) {
+  const [sidebars, setSidebars] = React.useState<SidebarRegistry>({});
+
+  const register = React.useCallback((name: string, context: SidebarContextProps) => {
+    setSidebars((prev) => ({ ...prev, [name]: context }));
+  }, []);
+
+  const unregister = React.useCallback((name: string) => {
+    setSidebars((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  }, []);
+
+  const value = React.useMemo(
+    () => ({ register, unregister, use: (name: string) => sidebars[name] }),
+    [register, unregister, sidebars]
+  );
+
+  return (
+    <SidebarManagerContext.Provider value={value}>
+      {children}
+    </SidebarManagerContext.Provider>
+  );
+}
+
+function SidebarManager({ children, name }: { children: React.ReactNode; name: string }) {
+  const sidebarContext = useSidebar();
+  const manager = useSidebarManager();
+
+  // Use refs to avoid infinite loops - we don't want changes to these
+  // objects to trigger re-registration, only changes to `name` should.
+  const sidebarContextRef = React.useRef(sidebarContext);
+  const managerRef = React.useRef(manager);
+
+  // Keep refs up to date
+  React.useLayoutEffect(() => {
+    sidebarContextRef.current = sidebarContext;
+    managerRef.current = manager;
+  });
+
+  // Register on mount / when name changes, unregister on unmount
+  React.useEffect(() => {
+    managerRef.current.register(name, sidebarContextRef.current);
+    return () => managerRef.current.unregister(name);
+  }, [name]);
+
+  // Keep the registry updated when sidebarContext changes (without causing loops)
+  React.useEffect(() => {
+    managerRef.current.register(name, sidebarContext);
+  }, [name, sidebarContext]);
+
+  return <>{children}</>;
+}
+
+function SidebarManagerTrigger({
+  name,
+  className,
+  onClick,
+  ...props
+}: React.ComponentProps<typeof Button> & { name: string }) {
+  const manager = useSidebarManager();
+  const sidebar = manager.use(name);
+
+  return (
+    <Button
+      data-sidebar="manager-trigger"
+      data-slot="sidebar-manager-trigger"
+      data-sidebar-name={name}
+      variant="ghost"
+      size="icon"
+      className={cn("size-7", className)}
+      onClick={(event) => {
+        onClick?.(event);
+        sidebar?.toggleSidebar();
+      }}
+      disabled={!sidebar}
+      {...props}
+    >
+      <PanelLeftIcon />
+      <span className="sr-only">Toggle {name} Sidebar</span>
+    </Button>
+  );
+}
+
 
 function SidebarProvider({
   defaultOpen = true,
@@ -221,7 +328,7 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "fixed bg-sidebar inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+          "absolute bg-sidebar inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -668,6 +775,11 @@ function SidebarMenuSubButton({
 }
 
 export {
+  SidebarManager,
+  SidebarManagerProvider,
+  SidebarManagerTrigger,
+  useSidebarManager,
+
   Sidebar,
   SidebarContent,
   SidebarFooter,

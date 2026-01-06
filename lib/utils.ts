@@ -34,6 +34,7 @@ function removeSpanTagsFromExpressions(innerHTML: string) {
   let indexOffset = 0;
   expressions.forEach((expr) => {
     const fullMatch = expr[0];
+    // this parse is there to get rid of span tags covering expressions
     const text = parse(fullMatch).textContent;
     // performing a splice operation
     innerHTML = replaceStringWithOffset(
