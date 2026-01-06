@@ -20,7 +20,7 @@ export function LeftSidebar() {
     <Sidebar side="left" className="bg-[#f6f5f5] border-r overflow-auto">
       <SidebarHeader>
         <div className="flex justify-between">
-          <h2 className="mx-2 font-semibold text-lg font-mono">JSON Data</h2>
+          <h2 className="mx-2 font-semibold text-lg">JSON Data</h2>
           <SidebarManagerTrigger name="left" />
 
         </div>

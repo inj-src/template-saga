@@ -14,11 +14,13 @@ interface DataStore {
   selectedData: unknown;
   selectedTemplateHtml: string | null;
   customDataSets: Record<string, CustomDataSet>;
+  customFields: Record<string, unknown>;
   setSelectedDataKey: (key: string) => void;
   addCustomDataSet: (label: string, data: unknown, templateHtml?: string) => string;
   loadCustomDataSets: () => void;
   getAllDataSets: () => Record<string, DataSet>;
   removeCustomDataSet: (key: string) => void;
+  setCustomFields: (fields: Record<string, unknown>) => void;
 }
 
 const generateCustomKey = (label: string): string => {
@@ -48,6 +50,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   selectedData: allDataSets["bill"].data,
   selectedTemplateHtml: allDataSets["bill"].templateHtml ?? null,
   customDataSets: {},
+  customFields: {},
 
   setSelectedDataKey: (key: string) => {
     const { customDataSets } = get();
@@ -105,5 +108,9 @@ export const useDataStore = create<DataStore>((set, get) => ({
       }
       return newState as DataStore;
     });
+  },
+
+  setCustomFields: (fields: Record<string, unknown>) => {
+    set({ customFields: fields });
   },
 }));
