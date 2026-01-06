@@ -3,6 +3,9 @@ import { renderAsync } from "@inj-src/docx-preview";
 import parse from "node-html-parser";
 import { twMerge } from "tailwind-merge";
 
+
+
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -15,9 +18,6 @@ export async function getHTMLStringFromParsedDoc(file: File): Promise<string> {
 
 export async function printPreview() {
   const { default: print } = await import("print-js");
-  // const styleContainer: HTMLDivElement | null = document.querySelector("#style_container");
-
-  // print({ printable: "preview-container", type: "html", scanStyles: false, style: styleContainer?.innerHTML });
   print({ printable: "preview-container", type: "html", scanStyles: false });
 }
 

@@ -11,6 +11,7 @@ import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import Link from "next/link";
 
+
 interface DocumentPanelProps {
   data: unknown;
   initialTemplateHtml: string | null;
@@ -119,12 +120,11 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
             </Button>
           </div>
         </div>
-
-          <Preview
-            data={data}
+        <Preview
+          data={data}
           applyData={activeTab == 'preview'}
-            htmlString={htmlString}
-            handleFileUpload={() => fileInputRef.current?.click()}
+          htmlString={htmlString}
+          handleFileUpload={() => fileInputRef.current?.click()}
         />
       </div>
     </Tabs>

@@ -4,17 +4,20 @@ import Handlebars from "handlebars";
 
 registerAllHelpers();
 
+type props = {
+  data: unknown;
+  htmlString: string | null;
+  handleFileUpload: () => void;
+  applyData?: boolean;
+}
+
 export function Preview({
   data,
   htmlString,
   handleFileUpload,
   applyData = true
-}: {
-  data: unknown;
-  htmlString: string | null;
-  handleFileUpload: () => void;
-    applyData?: boolean;
-  }) {
+}: props) {
+
   let templateString = "";
 
   try {
@@ -45,7 +48,6 @@ export function Preview({
         dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
         className="w-max mx-auto space-y-4 my-4 items-center flex-col [&>section]:shadow-xs [&>section]:outline [&>section]:outline-stone-300"
-
       />
     </div>
   );
