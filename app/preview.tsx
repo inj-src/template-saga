@@ -8,16 +8,22 @@ export function Preview({
   data,
   htmlString,
   handleFileUpload,
+  applyData = true
 }: {
   data: unknown;
   htmlString: string | null;
   handleFileUpload: () => void;
+    applyData?: boolean;
   }) {
   let templateString = "";
 
   try {
-    const template = Handlebars.compile(htmlString || "");
-    templateString = template(data);
+    if (applyData) {
+      const template = Handlebars.compile(htmlString || "");
+      templateString = template(data);
+    } else {
+      templateString = htmlString || "";
+    }
   } catch (error) {
     const err = error as Error;
 

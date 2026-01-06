@@ -1,5 +1,0 @@
-1. insert raw html
-2. better loops (loops based on tag?)
-3. Images
-4. Styling?
-5. 

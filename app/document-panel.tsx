@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, } from "@/components/ui/tabs";
-import { Upload, Printer, BookOpen } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
+import { Upload, Printer, BookOpen, Eye, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
 // import { Edit } from "./edit";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
@@ -81,7 +81,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
           </Button>
 
 
-          {/* <TabsList className="mx-auto">
+          <TabsList className="mx-auto">
             <TabsTrigger value="preview" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />
               Preview
@@ -94,7 +94,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
               <SquarePen className="w-4 h-4" />
               Edit
             </TabsTrigger>
-          </TabsList> */}
+          </TabsList>
           <div className="flex items-center gap-2">
             <Link href="/docs">
               <Button size={"icon"} variant={"secondary"} title="Help & Documentation">
@@ -122,15 +122,10 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
 
           <Preview
             data={data}
+          applyData={activeTab == 'preview'}
             htmlString={htmlString}
             handleFileUpload={() => fileInputRef.current?.click()}
-          />
-        {/* <TabsContent value="preview">
-        </TabsContent> */}
-
-        {/* <TabsContent value="edit">
-          <Edit htmlString={htmlString} setHtmlString={setHtmlString} data={data} />
-        </TabsContent> */}
+        />
       </div>
     </Tabs>
   );
