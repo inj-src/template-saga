@@ -45,7 +45,7 @@ export function Transform() {
          <CodeEditor
             value={code}
             onChange={setCode}
-            className="h-[280px] min-h-[200px]"
+            className="h-[480px] min-h-[200px]"
          />
 
          <Button

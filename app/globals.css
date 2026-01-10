@@ -123,25 +123,33 @@
   }
 }
 
-/* .docx-wrapper {
-  background-color: inherit !important;
-} */
 
+::-webkit-scrollbar {
+  width: 0.25rem;
+}
 
-  ::-webkit-scrollbar {
-    width: 0.25rem;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tt-scrollbar-color) transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--tt-scrollbar-color);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hljs-string,
+.hljs-number,
+.hljs-literal {
+  transition: outline-color 200ms ease;
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+
+  &:hover {
+    outline-color: currentColor;
   }
-  
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--tt-scrollbar-color) transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--tt-scrollbar-color);
-    border-radius: 9999px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
+}

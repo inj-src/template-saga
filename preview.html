@@ -1,26 +1,56 @@
-<table class="no-hband no-vband docx_table6" style="width: 564pt; text-align: left; table-layout: auto;">
-   <colgroup>
-      <col style="width: 84pt;">
-      <col style="width: 480pt;">
-   </colgroup>
-   <tbody>
-      <tr style="height: 65.3pt;">
-         <td
-            style="border-width: 1pt 1pt 1.5pt; border-style: solid; border-color: rgb(255, 255, 255) rgb(255, 255, 255) rgb(0, 0, 0); background-color: inherit; padding: 5pt; vertical-align: top;">
-            <p style="line-height: 1;"><span><span
-                     style="display: inline-block; position: relative; text-indent: 0px; width: 59.48pt; height: 59.48pt;"><img
-                        src="blob:http://localhost:3000/1d19360e-5b3c-4e68-95ab-f4e84b228f8f"
-                        style="position: relative; left: 0pt; top: 0pt; width: 59.48pt; height: 59.48pt;"></span></span><span></span>
-            </p>
-         </td>
-         <td
-            style="border-width: 1pt 1pt 1.5pt; border-style: solid; border-color: rgb(255, 255, 255) rgb(255, 255, 255) rgb(0, 0, 0); background-color: inherit; padding: 5pt; vertical-align: top;">
-            <p style="line-height: 1.15;"><span style="font-weight: bold; min-height: 16pt; font-size: 16pt;">Demo
-                  Diagnostic Center</span></p>
-            <p style="line-height: 1.15;"><span style="min-height: 13pt; font-size: 13pt;">From somewhere - 1230</span>
-            </p>
-            <p style="line-height: 1.15;"><span style="min-height: 13pt; font-size: 13pt;">Mob: 019XXXXXX</span></p>
-         </td>
-      </tr>
-   </tbody>
-</table>
+<code class="hljs"><span class="hljs-punctuation">{</span>
+ <span class="hljs-attr">"billId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"H-2025-007891"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"patientInfo"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"patientId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"P-1002345"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Jane M. Smith"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"age"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">52</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"gender"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Female"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"contact"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"+1 (555) 987-6543"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"address"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"456 Oak Avenue, Springfield"</span>
+ <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"admissionInfo"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"admissionDate"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2025-12-01T14:30:00Z"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"bed"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"WARD-A-203"</span>
+ <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"lineItems"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Admission Fee"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">500</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Operation Fee"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50000</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Surgeon Fee"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12000</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Room Rent (3 days @ 1500)"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4500</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Pharmacy and Medical Supplies"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3275.5</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+   <span class="hljs-attr">"description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Lab Tests"</span><span class="hljs-punctuation">,</span>
+   <span class="hljs-attr">"amount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1200</span>
+  <span class="hljs-punctuation">}</span>
+ <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"billSummary"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"totalAmount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">71475.5</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"discount"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2500</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"totalPayable"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">68975.5</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"amountPaid"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60000</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"due"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">8975.5</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"paidAmountInWord"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Sixty Thousand Dollars Only"</span>
+ <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"printDetails"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"printBy"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"billing_clerk_02"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"printingTime"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2025-12-09T00:23:00Z"</span>
+ <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-attr">"customFields"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"newField"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"hello world"</span>
+ <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code>
