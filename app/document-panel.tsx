@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
-import { Upload, Printer, BookOpen, Eye, SquarePen } from "lucide-react";
+import { Printer, BookOpen, Eye, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
+import { UploadModal } from "./UploadModal";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 import Link from "next/link";
@@ -15,6 +15,8 @@ interface DocumentPanelProps {
   data: unknown;
   initialTemplateHtml: string | null;
 }
+
+type PageSize = "A4" | "Letter" | "Legal" | "A3" | "A5";
 
 export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps) {
   const [htmlString, setHtmlString] = useState<string | null>(initialTemplateHtml);
@@ -33,6 +35,11 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
     } else if (file) {
       alert("Please select a valid .docx file");
     }
+  };
+
+  const handleDocxUpload = async (file: File, pageSize: PageSize) => {
+    await parseDocx(file);
+    console.log("Page size selected:", pageSize);
   };
 
   const parseDocx = async (file: File) => {
@@ -67,20 +74,7 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
             className="hidden"
           />
 
-
-          <Button
-            size={"icon"}
-            onClick={() => {
-              if (activeTab === "edit") {
-                setActiveTab('preview')
-              }
-              fileInputRef.current?.click()
-            }}
-            variant={htmlString ? "secondary" : "default"}
-            title={"Upload Document"}
-          >
-            <Upload />
-          </Button>
+          <UploadModal onDocxUpload={handleDocxUpload} />
 
 
           <TabsList className="mx-auto">
