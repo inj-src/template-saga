@@ -12,7 +12,9 @@ import { useDataStore } from "./store/useDataStore";
 import { LeftSidebar } from "./LeftSidebar";
 import { RightSidebar } from "./RightSidebar";
 
+import { Previewer } from "pagedjs";
 
+new Previewer();
 
 export default function Page() {
   const {
