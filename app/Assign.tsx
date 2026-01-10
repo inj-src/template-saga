@@ -1,21 +1,23 @@
 "use client";
 
+import { ExpressionTree } from "@/components/ExpressionTree";
+import { useDataStore } from "./store/useDataStore";
+
 export function Assign() {
+   const selectedTemplateHtml = useDataStore((state) => state.selectedTemplateHtml);
+
    return (
       <div className="flex flex-col gap-3">
          <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">
-               Assign Fields
+               Template Expressions
             </label>
             <p className="text-xs text-gray-500">
-               Assign values to template fields.
+               All handlebars expressions found in the template.
             </p>
          </div>
 
-         {/* TODO: Add field assignment UI */}
-         <div className="text-sm text-gray-400 italic p-4 border border-dashed rounded-md text-center">
-            Field assignment coming soon...
-         </div>
+         <ExpressionTree htmlString={selectedTemplateHtml} />
       </div>
    );
 }

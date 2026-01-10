@@ -9,6 +9,7 @@ import { UploadModal } from "./UploadModal";
 import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
 import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
 
 interface DocumentPanelProps {
