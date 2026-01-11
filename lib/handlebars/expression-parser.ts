@@ -39,7 +39,7 @@ export interface ParsedExpression {
  * - {{{...}}} - Triple mustache (unescaped HTML)
  * - {{...}} - Standard expressions
  */
-const EXPRESSION_REGEX = /\\?\{{2,4}[^}]+}{2,4}/g;
+const EXPRESSION_REGEX = /\\?\{{2,4}[^}]*?}{2,4}/g;
 
 /**
  * Parse the inner content of an expression to determine type and extract parts
