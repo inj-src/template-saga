@@ -21,6 +21,7 @@ interface DataStore {
   getAllDataSets: () => Record<string, DataSet>;
   removeCustomDataSet: (key: string) => void;
   setCustomFields: (fields: Record<string, unknown>) => void;
+  setSelectedTemplateHtml: (html: string | null) => void;
 }
 
 const generateCustomKey = (label: string): string => {
@@ -51,6 +52,10 @@ export const useDataStore = create<DataStore>((set, get) => ({
   selectedTemplateHtml: allDataSets["bill"].templateHtml ?? null,
   customDataSets: {},
   customFields: {},
+
+  setSelectedTemplateHtml: (html: string | null) => {
+    set({ selectedTemplateHtml: html });
+  },
 
   setSelectedDataKey: (key: string) => {
     const { customDataSets } = get();

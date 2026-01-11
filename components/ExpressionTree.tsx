@@ -8,6 +8,7 @@ import {
   type ParsedExpression,
 } from "@/lib/handlebars/expression-parser";
 import { getHelperConfig } from "@/lib/handlebars/helpers-config";
+import { useDataStore } from "@/app/store/useDataStore";
 
 interface ExpressionTreeProps {
   htmlString: string | null;
@@ -68,7 +69,7 @@ function ExpressionRow({ expr, lineNumber }: { expr: ParsedExpression; lineNumbe
   return (
     <div className="flex items-center gap-0 font-mono text-[11px] hover:bg-muted/30 transition-colors group">
       {/* Line number - Fixed position on the left */}
-      <span className="text-muted-foreground/40 w-8 shrink-0 text-right pr-2 select-none border-r border-transparent group-hover:border-muted-foreground/10">
+      <span className="text-muted-foreground/40 w-8 shrink-0 text-right pr-2 select-none">
         {lineNumber}
       </span>
 
@@ -113,11 +114,18 @@ function ExpressionRow({ expr, lineNumber }: { expr: ParsedExpression; lineNumbe
  * indentation for block helpers. Uses thin, borderless inputs for
  * a compact, subtle appearance.
  */
-export function ExpressionTree({ htmlString }: ExpressionTreeProps) {
+export function ExpressionTree() {
+
+  const htmlString = useDataStore((state) => state.selectedTemplateHtml);
+  const setHtmlString = useDataStore((state) => state.setSelectedTemplateHtml);
+
+
   const expressions = useMemo(() => {
     if (!htmlString) return [];
     return parseHandlebarsExpressionsFlat(htmlString);
   }, [htmlString]);
+
+
 
   if (!htmlString) {
     return (

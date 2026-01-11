@@ -1,10 +1,8 @@
 "use client";
 
 import { ExpressionTree } from "@/components/ExpressionTree";
-import { useDataStore } from "./store/useDataStore";
 
 export function Assign() {
-   const selectedTemplateHtml = useDataStore((state) => state.selectedTemplateHtml);
 
    return (
       <div className="flex flex-col gap-3">
@@ -17,7 +15,7 @@ export function Assign() {
             </p>
          </div>
 
-         <ExpressionTree htmlString={selectedTemplateHtml} />
+         <ExpressionTree />
       </div>
    );
 }

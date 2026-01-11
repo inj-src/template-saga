@@ -5,7 +5,7 @@ import json from "highlight.js/lib/languages/json";
 hljs.registerLanguage("json", json);
 import "highlight.js/styles/stackoverflow-light.css";
 import { useDataStore } from "./store/useDataStore";
-import { useEffect, useRef, useMemo, useCallback, useLayoutEffect } from "react";
+import { useEffect, useRef, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 
 /**
