@@ -1,56 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
 import { Printer, BookOpen, Eye, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
 import { UploadModal } from "./UploadModal";
-import { getHTMLStringFromParsedDoc, printPreview } from "@/lib/utils";
+import { printPreview } from "@/lib/utils";
+import { handleDocxUpload } from "@/lib/upload-handlers";
 import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
+import { useDataStore } from "./store/useDataStore";
 
 
-interface DocumentPanelProps {
-  data: unknown;
-  initialTemplateHtml: string | null;
-}
+export function DocumentPanel() {
+  const htmlString = useDataStore(state => state.selectedTemplateHtml);
+  const data = useDataStore(state => state.selectedData);
 
-type PageSize = "A4" | "Letter" | "Legal" | "A3" | "A5";
-
-export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps) {
-  const [htmlString, setHtmlString] = useState<string | null>(initialTemplateHtml);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setHtmlString(initialTemplateHtml);
-  }, [initialTemplateHtml]);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const docxExt = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    const file = e.target.files?.[0];
-    if (file && file.type === docxExt) {
-      // setSelectedFile(file);
-      await parseDocx(file);
-    } else if (file) {
-      alert("Please select a valid .docx file");
-    }
-  };
-
-  const handleDocxUpload = async (file: File, pageSize: PageSize) => {
-    await parseDocx(file);
-    console.log("Page size selected:", pageSize);
-  };
-
-  const parseDocx = async (file: File) => {
-    try {
-      const htmlString = await getHTMLStringFromParsedDoc(file);
-      setHtmlString(htmlString);
-    } catch (error) {
-      console.error("Error parsing docx:", error);
-    }
-  };
   // const sidebar = useSidebar();
   const manager = useSidebarManager();
   const leftSidebar = manager.use("left");
@@ -67,15 +33,8 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
         <div className="top-0 z-10 sticky flex items-center gap-4 bg-white px-4 py-2 border-gray-300 border-b">
           {!leftSidebar?.open && <SidebarManagerTrigger name="left" />}
 
-          <Input
-            ref={fileInputRef}
-            type="file"
-            accept=".docx"
-            onChange={handleFileChange}
-            className="hidden"
+          <UploadModal
           />
-
-          <UploadModal onDocxUpload={handleDocxUpload} />
 
 
           <TabsList className="mx-auto">
@@ -121,7 +80,6 @@ export function DocumentPanel({ data, initialTemplateHtml }: DocumentPanelProps)
           data={data}
           applyData={activeTab == 'preview'}
           htmlString={htmlString}
-          handleFileUpload={() => fileInputRef.current?.click()}
         />
       </div>
     </Tabs>

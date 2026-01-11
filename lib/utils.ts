@@ -1,19 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
-import { renderAsync } from "@inj-src/docx-preview";
-import parse from "node-html-parser";
 import { twMerge } from "tailwind-merge";
-
-
 
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export async function getHTMLStringFromParsedDoc(file: File): Promise<string> {
-  const container = document.createElement("div");
-  await renderAsync(file, container, undefined, { inWrapper: false, useBase64URL: true });
-  return purifyTemplate(container.innerHTML);
 }
 
 export async function printPreview() {
@@ -21,7 +11,7 @@ export async function printPreview() {
   print({ printable: "preview-container", type: "html", scanStyles: false });
 }
 
-function purifyTemplate(innerHTML: string) {
+export function purifyTemplate(innerHTML: string) {
   let processedHTMLString = removeSpanTagsFromExpressions(innerHTML);
   processedHTMLString = processedHTMLString.replaceAll("”", '"').replaceAll("“", '"');
 
@@ -35,7 +25,8 @@ function removeSpanTagsFromExpressions(innerHTML: string) {
   expressions.forEach((expr) => {
     const fullMatch = expr[0];
     // this parse is there to get rid of span tags covering expressions
-    const text = parse(fullMatch).textContent;
+    const parser = new DOMParser();
+    const text = parser.parseFromString(fullMatch, "text/html").body.textContent || "";
     // performing a splice operation
     innerHTML = replaceStringWithOffset(
       innerHTML,

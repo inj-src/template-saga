@@ -7,14 +7,12 @@ registerAllHelpers();
 type props = {
   data: unknown;
   htmlString: string | null;
-  handleFileUpload: () => void;
   applyData?: boolean;
 }
 
 export function Preview({
   data,
   htmlString,
-  handleFileUpload,
   applyData = true
 }: props) {
 
@@ -40,7 +38,7 @@ export function Preview({
     <div>
       {!htmlString && (
         <div className="flex flex-col justify-center items-center gap-4 h-[90dvh]">
-          <FileText className="w-24 h-24 text-gray-300 cursor-pointer" onClick={handleFileUpload} />
+          <FileText className="w-24 h-24 text-gray-300 cursor-pointer" />
           <p className="font-medium text-gray-500 text-lg">Upload a document to preview</p>
         </div>
       )}

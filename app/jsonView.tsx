@@ -13,7 +13,6 @@ import { toast } from "sonner";
  * Tracks JSON structure to compute Handlebars-compatible paths.
  */
 function injectDataPaths(container: HTMLElement): void {
-  console.log('I ran');
   const pathStack: (string | number)[] = [];
   let lastKey: string | null = null;
   let inArray = false;

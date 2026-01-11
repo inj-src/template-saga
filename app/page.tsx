@@ -14,8 +14,6 @@ import { RightSidebar } from "./RightSidebar";
 
 export default function Page() {
   const {
-    selectedData,
-    selectedTemplateHtml,
     loadCustomDataSets,
   } = useDataStore();
 
@@ -37,7 +35,7 @@ export default function Page() {
 
             <SidebarInset>
               <ScrollArea className="h-screen">
-                <DocumentPanel data={selectedData} initialTemplateHtml={selectedTemplateHtml} />
+                <DocumentPanel />
               </ScrollArea>
             </SidebarInset>
 

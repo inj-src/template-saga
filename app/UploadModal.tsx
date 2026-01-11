@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, File, FileArchive, Code } from "lucide-react";
+import { Upload, File, FileArchive, Code, Loader2, AlertCircle } from "lucide-react";
 import {
    Dialog,
    DialogContent,
@@ -15,53 +15,84 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+
 import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select";
+   handleZipUpload as processZip,
+   handleRawHtmlUpload as processRawHtml,
+   handleDocxUpload,
+} from "@/lib/upload-handlers";
+import { useDataStore } from "./store/useDataStore";
 
-type PageSize = "A4" | "Letter" | "Legal" | "A3" | "A5";
 
-interface UploadModalProps {
-   onDocxUpload: (file: File, pageSize: PageSize) => void;
-}
-
-export function UploadModal({ onDocxUpload }: UploadModalProps) {
+export function UploadModal() {
    const [open, setOpen] = useState(false);
-   const [pageSize, setPageSize] = useState<PageSize>("A4");
    const [rawHtml, setRawHtml] = useState("");
+   const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState<string | null>(null);
    const docxInputRef = useRef<HTMLInputElement>(null);
    const zipInputRef = useRef<HTMLInputElement>(null);
+   const setHTMLString = useDataStore(state => state.setSelectedTemplateHtml);
 
-   const handleDocxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const handleDocxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const docxExt = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       const file = e.target.files?.[0];
       if (file && file.type === docxExt) {
-         onDocxUpload(file, pageSize);
+         const result = await handleDocxUpload(file);
+         setHTMLString(result.html);
          setOpen(false);
          // Reset the input
          if (docxInputRef.current) {
             docxInputRef.current.value = "";
          }
       } else if (file) {
-         alert("Please select a valid .docx file");
+         setError("Please select a valid .docx file");
       }
    };
 
-   const handleZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // TODO: Implement zip upload logic
+   const handleZipChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) {
-         console.log("Zip upload not implemented yet", file);
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith(".zip")) {
+         setError("Please select a valid .zip file");
+         return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+         const result = await processZip(file);
+         setHTMLString(result.html);
+         setOpen(false);
+      } catch (err) {
+         setError(err instanceof Error ? err.message : "Failed to process ZIP file");
+      } finally {
+         setIsLoading(false);
+         if (zipInputRef.current) {
+            zipInputRef.current.value = "";
+         }
       }
    };
 
-   const handleRawHtmlUpload = () => {
-      // TODO: Implement raw HTML upload logic
-      console.log("Raw HTML upload not implemented yet", rawHtml);
+   const handleRawHtmlSubmit = async () => {
+      if (!rawHtml.trim()) {
+         setError("HTML content cannot be empty");
+         return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+         const result = await processRawHtml(rawHtml);
+         setHTMLString(result.html);
+         setOpen(false);
+      } catch (err) {
+         setError(err instanceof Error ? err.message : "Failed to process HTML");
+      } finally {
+         setIsLoading(false);
+      }
    };
 
    const handleOpenChange = (isOpen: boolean) => {
@@ -69,7 +100,8 @@ export function UploadModal({ onDocxUpload }: UploadModalProps) {
       if (!isOpen) {
          // Reset form when closing
          setRawHtml("");
-         setPageSize("A4");
+         setError(null);
+         setIsLoading(false);
       }
    };
 
@@ -96,21 +128,7 @@ export function UploadModal({ onDocxUpload }: UploadModalProps) {
                {/* Page Size Selector */}
                <div className="grid gap-2">
                   <Label htmlFor="page-size">Page Size</Label>
-                  <Select
-                     value={pageSize}
-                     onValueChange={(value) => setPageSize(value as PageSize)}
-                  >
-                     <SelectTrigger id="page-size">
-                        <SelectValue placeholder="Select page size" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectItem value="A4">A4 (210 x 297 mm)</SelectItem>
-                        <SelectItem value="Letter">Letter (8.5 x 11 in)</SelectItem>
-                        <SelectItem value="Legal">Legal (8.5 x 14 in)</SelectItem>
-                        <SelectItem value="A3">A3 (297 x 420 mm)</SelectItem>
-                        <SelectItem value="A5">A5 (148 x 210 mm)</SelectItem>
-                     </SelectContent>
-                  </Select>
+
                </div>
 
                {/* Upload Type Tabs */}
@@ -154,15 +172,23 @@ export function UploadModal({ onDocxUpload }: UploadModalProps) {
 
                   <TabsContent value="zip" className="space-y-4 mt-4">
                      <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-muted-foreground/25 rounded-lg hover:border-muted-foreground/50 transition-colors">
-                        <FileArchive className="w-12 h-12 text-muted-foreground mb-4" />
-                        <p className="text-sm text-muted-foreground mb-4">
-                           Upload a .zip file containing documents
+                        {isLoading ? (
+                           <Loader2 className="w-12 h-12 text-muted-foreground mb-4 animate-spin" />
+                        ) : (
+                              <FileArchive className="w-12 h-12 text-muted-foreground mb-4" />
+                        )}
+                        <p className="text-sm text-muted-foreground mb-2">
+                           Upload a .zip file containing HTML and images
+                        </p>
+                        <p className="text-xs text-muted-foreground mb-4">
+                           ZIP should contain: *.html file + images/*.png files
                         </p>
                         <Button
                            onClick={() => zipInputRef.current?.click()}
                            variant="outline"
+                           disabled={isLoading}
                         >
-                           Select ZIP File
+                           {isLoading ? "Processing..." : "Select ZIP File"}
                         </Button>
                         <input
                            ref={zipInputRef}
@@ -171,9 +197,12 @@ export function UploadModal({ onDocxUpload }: UploadModalProps) {
                            onChange={handleZipChange}
                            className="hidden"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">
-                           ZIP upload coming soon...
-                        </p>
+                        {error && (
+                           <div className="flex items-center gap-2 text-destructive mt-2">
+                              <AlertCircle className="w-4 h-4" />
+                              <p className="text-sm">{error}</p>
+                           </div>
+                        )}
                      </div>
                   </TabsContent>
 
@@ -186,19 +215,27 @@ export function UploadModal({ onDocxUpload }: UploadModalProps) {
                            className="min-h-[200px] font-mono text-sm"
                            value={rawHtml}
                            onChange={(e) => setRawHtml(e.target.value)}
+                           disabled={isLoading}
                         />
                         <p className="text-xs text-muted-foreground">
                            Paste your HTML code directly
                         </p>
                      </div>
+                     {error && (
+                        <div className="flex items-center gap-2 text-destructive">
+                           <AlertCircle className="w-4 h-4" />
+                           <p className="text-sm">{error}</p>
+                        </div>
+                     )}
                      <div className="flex justify-end">
-                        <Button onClick={handleRawHtmlUpload} disabled={!rawHtml.trim()}>
-                           Upload HTML
+                        <Button onClick={handleRawHtmlSubmit} disabled={!rawHtml.trim() || isLoading}>
+                           {isLoading ? (
+                              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                           ) : (
+                              "Upload HTML"
+                           )}
                         </Button>
                      </div>
-                     <p className="text-xs text-muted-foreground text-center">
-                        HTML upload coming soon...
-                     </p>
                   </TabsContent>
                </Tabs>
             </div>
