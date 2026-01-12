@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
 import { Printer, BookOpen, Eye, SquarePen } from "lucide-react";
 import { Preview } from "./preview";
 import { UploadModal } from "./UploadModal";
 import { printPreview } from "@/lib/utils";
-import { handleDocxUpload } from "@/lib/upload-handlers";
-import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useDataStore } from "./store/useDataStore";
+import { SidebarManagerTrigger, useSidebarManager } from "@/components/ui/sidebar";
 
 
 export function DocumentPanel() {
@@ -29,26 +28,30 @@ export function DocumentPanel() {
       value={activeTab}
       onValueChange={(value) => setActiveTab(value as "preview" | "edit")}
     >
-      <div className="flex flex-col gap-4 w-full h-full">
+      <div
+        className="h-dvh flex flex-col"
+      >
+
         <div className="top-0 z-10 sticky flex items-center gap-4 bg-white px-4 py-2 border-gray-300 border-b">
-          {!leftSidebar?.open && <SidebarManagerTrigger name="left" />}
+          {(leftSidebar?.isMobile || !leftSidebar?.open) && <SidebarManagerTrigger name="left" />}
+          <UploadModal />
 
-          <UploadModal
-          />
-
-
-          <TabsList className="mx-auto">
+          <TabsList className="mx-auto w-full max-w-[250px]">
             <TabsTrigger value="preview" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />
-              Preview
+              <span className="hidden lg:inline">
+                Preview
+              </span>
             </TabsTrigger>
             <TabsTrigger
               value="edit"
-              className="flex items-center gap-2 w-36"
+              className="flex items-center gap-2"
               disabled={!htmlString}
             >
               <SquarePen className="w-4 h-4" />
-              Edit
+              <span className="hidden lg:inline">
+                Edit
+              </span>
             </TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-2">
@@ -57,6 +60,7 @@ export function DocumentPanel() {
                 <BookOpen />
               </Button>
             </Link>
+
             <Button
               size={"icon"}
               title="Print Preview"
@@ -73,15 +77,19 @@ export function DocumentPanel() {
             >
               <Printer />
             </Button>
-            {!rightSidebar?.open && <SidebarManagerTrigger name="right" />}
+            {(rightSidebar?.isMobile || !rightSidebar?.open) && <SidebarManagerTrigger name="right" />}
           </div>
         </div>
-        <Preview
-          data={data}
-          applyData={activeTab == 'preview'}
-          htmlString={htmlString}
-        />
+
+        <div className="flex-1 overflow-auto p-4 ">
+          <Preview
+            data={data}
+            applyData={activeTab == 'preview'}
+            htmlString={htmlString}
+          />
+        </div>
       </div>
+
     </Tabs>
   );
 }

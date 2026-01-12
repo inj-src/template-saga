@@ -109,12 +109,18 @@ export async function handleZipUpload(file: File): Promise<UploadResult> {
    const styleTags = doc.querySelectorAll("style");
    const styleContent = Array.from(styleTags).map((tag) => tag.outerHTML).join("\n");
 
-   // Get body content
+   // Get body content and wrap with a div that has the body's class
    const body = doc.querySelector("body");
+   const bodyClass = body?.className || "";
    const bodyContent = body ? body.innerHTML : processedHtml;
 
-   // Combine: [style tags] + [body content]
-   const finalHtml = styleContent + "\n" + bodyContent;
+   // Wrap body content in a div with the body's class
+   const wrappedContent = bodyClass
+      ? `<div class="${bodyClass}">${bodyContent}</div>`
+      : bodyContent;
+
+   // Combine: [style tags] + [wrapped body content]
+   const finalHtml = styleContent + "\n" + wrappedContent;
    const html = purifyTemplate(finalHtml);
 
    return {

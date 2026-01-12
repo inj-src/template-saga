@@ -66,6 +66,7 @@ const getDisplayParts = (expr: ParsedExpression) => {
 
 function ExpressionRow({ expr, lineNumber, onUpdate }: ExpressionRowProps) {
   const helperConfig = expr.helperName ? getHelperConfig(expr.helperName) : null;
+  const setHighlightedExpression = useDataStore((state) => state.setHighlightedExpression);
 
   // Determine display value and styling based on expression type
 
@@ -75,8 +76,17 @@ function ExpressionRow({ expr, lineNumber, onUpdate }: ExpressionRowProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newArg = e.target.value;
     const newRaw = parts.buildRaw(newArg);
+    setHighlightedExpression({ ...expr, raw: newRaw });
     onUpdate(expr.raw, newRaw, expr.position);
   };
+
+  function handleFocus() {
+    setHighlightedExpression(expr);
+  }
+
+  function handleBlur() {
+    setHighlightedExpression(null);
+  }
 
   return (
     <div className="flex items-center gap-0 font-mono text-[11px] hover:bg-muted/30 transition-colors group">
@@ -96,18 +106,23 @@ function ExpressionRow({ expr, lineNumber, onUpdate }: ExpressionRowProps) {
         </span>
 
         {/* Argument as editable input - thin and borderless, width fits content */}
-        <Input
-          defaultValue={parts.argument.trim()}
-          className={cn(
-            "h-5 px-1 py-0 border-0 shadow-none rounded-none",
-            "bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
-            "text-[11px] font-mono shrink-0",
-            "hover:bg-muted/50 transition-colors"
-          )}
-          style={{ width: `${Math.max(parts.argument.trim().length, 1) + 2}ch` }}
-          title={helperConfig?.description}
-          onChange={handleChange}
-        />
+        {/* Don't render input for closing block helpers - they have no editable arguments */}
+        {expr.type !== "block-close" && (
+          <Input
+            defaultValue={parts.argument.trim()}
+            className={cn(
+              "h-5 px-1 py-0 border-0 shadow-none rounded-none",
+              "bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
+              "text-[11px] font-mono shrink-0",
+              "hover:bg-muted/50 transition-colors"
+            )}
+            style={{ width: `${Math.max(parts.argument.trim().length, 1) + 1}ch` }}
+            title={helperConfig?.description}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
+        )}
 
         {/* Suffix */}
         <span className={cn("text-muted-foreground shrink-0", isBlockTag && "text-amber-600")}>

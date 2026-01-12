@@ -1,6 +1,7 @@
 import { registerAllHelpers } from "@/lib/handlebars/helpers";
 import { FileText } from "lucide-react";
 import Handlebars from "handlebars";
+import { useDataStore } from "./store/useDataStore";
 
 registerAllHelpers();
 
@@ -17,13 +18,19 @@ export function Preview({
 }: props) {
 
   let templateString = "";
+  const exp = useDataStore((state) => state.highlightedExpression);
 
   try {
+    const template = Handlebars.compile(htmlString || "");
     if (applyData) {
-      const template = Handlebars.compile(htmlString || "");
       templateString = template(data);
     } else {
       templateString = htmlString || "";
+      if (exp) {
+        const before = templateString.slice(0, exp.position);
+        const after = templateString.slice(exp.position + exp.raw.length);
+        templateString = `${before}<span class="bg-yellow-100 ring-1 ring-yellow-400">${exp.raw}</span>${after}`;
+      }
     }
   } catch (error) {
     const err = error as Error;
@@ -45,8 +52,10 @@ export function Preview({
       <div
         dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
-        className="w-max mx-auto space-y-4 my-4 items-center flex-col [&>section]:shadow-xs [&>section]:outline [&>section]:outline-stone-300"
+        className="w-max mx-auto space-y-4 my-4 items-center flex-col shadow-xs outline outline-stone-300"
       />
     </div>
   );
 }
+
+

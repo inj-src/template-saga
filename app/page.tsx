@@ -23,30 +23,29 @@ export default function Page() {
 
 
   return (
-    <SidebarManagerProvider>
-      <SidebarProvider defaultOpen={true}>
+    <div className="max-w-screen overflow-x-hidden">
+      <SidebarManagerProvider>
+        <SidebarProvider defaultOpen={true}>
 
-        <SidebarManager name="left">
-          <LeftSidebar />
-        </SidebarManager>
+          <SidebarManager name="left">
+            <LeftSidebar />
+          </SidebarManager>
+          <SidebarInset className="min-w-0 ">
 
-        <SidebarInset>
-          <SidebarProvider defaultOpen={true}>
-
-            <SidebarInset>
-              <ScrollArea className="h-screen">
+            <SidebarProvider defaultOpen={true}>
+              <SidebarInset className="min-w-0">
                 <DocumentPanel />
-              </ScrollArea>
-            </SidebarInset>
+              </SidebarInset>
 
-            <SidebarManager name="right">
-              <RightSidebar />
-            </SidebarManager>
+              <SidebarManager name="right">
+                <RightSidebar />
+              </SidebarManager>
+            </SidebarProvider>
 
-          </SidebarProvider>
-        </SidebarInset>
-      </SidebarProvider>
-    </SidebarManagerProvider>
+          </SidebarInset>
+        </SidebarProvider>
+      </SidebarManagerProvider>
+    </div>
   );
 }
 

@@ -58,3 +58,8 @@ function replaceStringWithOffset(
   return prefix + replacedSuffix;
 }
 
+export function replaceAt(targetSting: string, replaceWith: string, startPosition: number = 0) {
+  const before = targetSting.slice(0, startPosition);
+  const after = targetSting.slice(startPosition + replaceWith.length);
+  return `${before}${replaceWith}${after}`;
+}

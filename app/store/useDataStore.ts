@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { allDataSets, type DataSet } from "../dummy-data";
+import { ParsedExpression } from "@/lib/handlebars/expression-parser";
 
 const CUSTOM_DATASETS_KEY = "template-saga-custom-datasets";
 
@@ -22,6 +23,8 @@ interface DataStore {
   removeCustomDataSet: (key: string) => void;
   setCustomFields: (fields: Record<string, unknown>) => void;
   setSelectedTemplateHtml: (html: string | null) => void;
+  setHighlightedExpression: (expression: ParsedExpression | null) => void;
+  highlightedExpression: ParsedExpression | null;
 }
 
 const generateCustomKey = (label: string): string => {
@@ -52,6 +55,10 @@ export const useDataStore = create<DataStore>((set, get) => ({
   selectedTemplateHtml: allDataSets["bill"].templateHtml ?? null,
   customDataSets: {},
   customFields: {},
+  highlightedExpression: null,
+  setHighlightedExpression: (expression: ParsedExpression | null) => {
+    set({ highlightedExpression: expression });
+  },
 
   setSelectedTemplateHtml: (html: string | null) => {
     set({ selectedTemplateHtml: html });
