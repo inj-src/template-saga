@@ -1,0 +1,17 @@
+@page {
+   @top-center {
+      content: element(runningHeader);
+   }
+
+   @bottom-center {
+      content: element(runningFooter);
+   }
+}
+
+header {
+   position: running(runningHeader);
+}
+
+footer {
+   position: running(runningFooter);
+}

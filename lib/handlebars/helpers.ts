@@ -53,7 +53,7 @@ function tableTarget(this: unknown, targetName: string, options: Handlebars.Help
     console.warn("table target helper: no <table> element found in block content");
     return codeBlock;
   }
-  return new Handlebars.SafeString(root.toString());
+  return new Handlebars.SafeString(root.body.innerHTML);
 }
 
 function tableHelper(context: TableContext[], options: Handlebars.HelperOptions) {
@@ -88,15 +88,13 @@ function tableHelper(context: TableContext[], options: Handlebars.HelperOptions)
   }
 
   const allRows = table.querySelectorAll("tr");
+  const templateRows: Element[] = [];
 
-  const templateRows = [];
-
-  for (let i = allRows.length - 1; i >= 0; i--) {
-    const row = allRows[i];
+  for (const row of allRows) {
     const cells = row.querySelectorAll("td");
 
     for (const td of cells) {
-      const tdContent = td.textContent?.trim();
+      const tdContent = td.textContent?.trim() ?? "";
       // the regex checks for patterns like {{ variable }} or \{{ variable }}
       if (/^\\?\{\{.+\}\}$/.test(tdContent)) {
         templateRows.push(row);
@@ -112,19 +110,19 @@ function tableHelper(context: TableContext[], options: Handlebars.HelperOptions)
 
   if (context.length === 0) {
     templateRows.forEach((row) => row.remove());
-    return new Handlebars.SafeString(root.toString());
+    return new Handlebars.SafeString(root.body.innerHTML);
   }
 
   const templateRowString = templateRows.reduceRight((acc, row) => {
-    return row.toString() + acc;
+    return row.outerHTML + acc;
   }, "");
 
   const templateString = `{{#each this}}${templateRowString}{{/each}}`;
   const template = Handlebars.compile(templateString);
   const rows = template(context, runtimeOptions);
-  templateRows[0].after(rows);
+  templateRows[0].insertAdjacentHTML("afterend", rows);
   templateRows.forEach((row) => row.remove());
-  return new Handlebars.SafeString(root.toString());
+  return new Handlebars.SafeString(root.body.innerHTML);
 }
 
 function helperFunctions(

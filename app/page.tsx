@@ -25,14 +25,14 @@ export default function Page() {
   return (
     <div className="max-w-screen overflow-x-hidden">
       <SidebarManagerProvider>
-        <SidebarProvider defaultOpen={true}>
+        <SidebarProvider defaultOpen={false}>
 
           <SidebarManager name="left">
             <LeftSidebar />
           </SidebarManager>
           <SidebarInset className="min-w-0 ">
 
-            <SidebarProvider defaultOpen={true}>
+            <SidebarProvider defaultOpen={false}>
               <SidebarInset className="min-w-0">
                 <DocumentPanel />
               </SidebarInset>

@@ -58,7 +58,7 @@ export function Preview({
       <div
         // dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
-        className="w-max mx-auto space-y-4 my-4 items-center flex-col shadow-xs outline outline-stone-300"
+        className="w-max mx-auto space-y-4 my-4 items-center flex-col"
       >
         {parse(pages)}
       </div>

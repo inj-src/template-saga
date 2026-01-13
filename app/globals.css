@@ -151,3 +151,7 @@
     outline-color: currentColor;
   }
 }
+
+.pagedjs_page {
+  @apply shadow-xs outline outline-stone-300 mb-8;
+}

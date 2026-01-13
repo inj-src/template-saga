@@ -26,21 +26,21 @@ export function usePaginate(htmlString: string, paperSize: string = "A4") {
 async function paginate(htmlString: string, paperSize: string = "A4") {
    const dom = new DOMParser().parseFromString(htmlString, "text/html");
 
-   const hiddenContainer = document.createElement('div');
-   hiddenContainer.style.visibility = 'hidden';
-   document.body.appendChild(hiddenContainer);
-   hiddenContainer.appendChild(dom);
+   const template = document.createElement('div');
+   template.append(...dom.head.children);
+   template.append(...dom.body.children);
 
+   document.body.appendChild(template);
 
    let returnString = '';
 
    // include style tags
-   dom.querySelectorAll('style').forEach((style) => {
+   template.querySelectorAll('style').forEach((style) => {
       returnString += style.outerHTML;
    });
 
    // include sections
-   const sections = dom.querySelectorAll("section")
+   const sections = template.querySelectorAll<HTMLElement>("& > section")
 
    for (const section of sections) {
 
@@ -52,6 +52,8 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
          right: parseFloat(paddingRight),
          left: parseFloat(paddingLeft),
       };
+
+      section.removeAttribute('style');
 
       const header = section.querySelector('header');
       const footer = section.querySelector('footer');
@@ -72,8 +74,8 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
          }
 
          margins.top = Math.max(margins.top, topHeight);
-         header.removeAttribute('style');
-         header.style.height = `${topHeight}px`;
+         // header.removeAttribute('style');
+         // header.style.height = `${topHeight}px`;
       }
 
       if (footer) {
@@ -92,19 +94,30 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
          }
 
          margins.bottom = Math.max(margins.bottom, bottomHeight);
-         footer.removeAttribute('style');
-         footer.style.height = `${bottomHeight}px`;
-      }
-
-      section.removeAttribute('style');
+         // footer.removeAttribute('style');
+         // footer.style.height = `${bottomHeight}px`;
+      }  
 
       const container = document.createElement('div');
+      container.style.visibility = 'hidden';
+      document.body.appendChild(container);
+
+      const pageStyle = `@page {size: A4; margin: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;}`
+
+      //# for some reason pagedjs accepts this content format: header -> footer -> content
+      if (footer) section.prepend(footer)
+      if (header) section.prepend(header)
+
+
       const previewer = new Previewer();
-      const result = await previewer.preview(htmlString, [], container);
+      const result = await previewer.preview(section, ['/paged.css', { pageStyle }], container);
       console.log({ result })
 
       returnString += container.innerHTML;
+      container.remove();
    }
 
+   template.remove();
    return returnString;
 }
+
