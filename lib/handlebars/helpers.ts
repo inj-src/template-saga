@@ -1,6 +1,5 @@
 // import parse from "multi-number-parse";
 import Handlebars from "handlebars";
-import { parse, type HTMLElement as NodeHTMLElement } from "node-html-parser";
 import * as parseNumber from "multi-number-parse";
 import * as H from "just-handlebars-helpers";
 
@@ -45,7 +44,8 @@ function tableTarget(this: unknown, targetName: string, options: Handlebars.Help
   const data = Handlebars.createFrame(options.data);
 
   const codeBlock = options.fn(undefined, { data });
-  const root = parse(codeBlock);
+
+  const root = new DOMParser().parseFromString(codeBlock, "text/html");
   const table = root.querySelector("table");
   if (table) {
     table.setAttribute("data-_table-target_", targetName || "target");
@@ -77,7 +77,7 @@ function tableHelper(context: TableContext[], options: Handlebars.HelperOptions)
 
   const blockContent = options.fn(undefined, runtimeOptions);
 
-  const root = parse(blockContent);
+  const root = new DOMParser().parseFromString(blockContent, "text/html");
   const tableSelector = `table[data-_table-target_="${options.hash.target || 'target'}"]`
 
   // If no table is found with the table selector then catch the first table;
@@ -89,14 +89,14 @@ function tableHelper(context: TableContext[], options: Handlebars.HelperOptions)
 
   const allRows = table.querySelectorAll("tr");
 
-  const templateRows: NodeHTMLElement[] = [];
+  const templateRows = [];
 
   for (let i = allRows.length - 1; i >= 0; i--) {
     const row = allRows[i];
     const cells = row.querySelectorAll("td");
 
     for (const td of cells) {
-      const tdContent = td.text.trim();
+      const tdContent = td.textContent?.trim();
       // the regex checks for patterns like {{ variable }} or \{{ variable }}
       if (/^\\?\{\{.+\}\}$/.test(tdContent)) {
         templateRows.push(row);

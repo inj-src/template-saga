@@ -2,6 +2,9 @@ import { registerAllHelpers } from "@/lib/handlebars/helpers";
 import { FileText } from "lucide-react";
 import Handlebars from "handlebars";
 import { useDataStore } from "./store/useDataStore";
+import { usePaginate } from "./paginate";
+import parse from "html-react-parser";
+
 
 registerAllHelpers();
 
@@ -24,6 +27,7 @@ export function Preview({
     const template = Handlebars.compile(htmlString || "");
     if (applyData) {
       templateString = template(data);
+
     } else {
       templateString = htmlString || "";
       if (exp) {
@@ -41,6 +45,8 @@ export function Preview({
     </div>`;
   }
 
+  const { pages, loading, error } = usePaginate(templateString);
+
   return (
     <div>
       {!htmlString && (
@@ -50,10 +56,12 @@ export function Preview({
         </div>
       )}
       <div
-        dangerouslySetInnerHTML={{ __html: templateString }}
+        // dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
         className="w-max mx-auto space-y-4 my-4 items-center flex-col shadow-xs outline outline-stone-300"
-      />
+      >
+        {parse(pages)}
+      </div>
     </div>
   );
 }
