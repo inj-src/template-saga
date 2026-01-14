@@ -22,11 +22,18 @@ export function Preview({
 
   let templateString = "";
   const exp = useDataStore((state) => state.highlightedExpression);
+  const customFields = useDataStore((state) => state.customFields);
+
+  // Merge customFields with data when data is an object
+  const mergedData =
+    data && typeof data === "object" && !Array.isArray(data)
+      ? { ...data, customFields }
+      : data;
 
   try {
     const template = Handlebars.compile(htmlString || "");
     if (applyData) {
-      templateString = template(data);
+      templateString = template(mergedData);
 
     } else {
       templateString = htmlString || "";

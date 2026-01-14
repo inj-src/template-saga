@@ -262,6 +262,39 @@ export function registerHandleMissingHelper() {
 }
 
 /**
+ * Register img helper
+ * Renders an image tag with optional width and height
+ * Usage: {{img src="image.png"}} or {{img src="image.png" width="100" height="100"}}
+ */
+export function registerImgHelper() {
+  Handlebars.registerHelper("img", function (options: Handlebars.HelperOptions) {
+    const src = options.hash.src;
+    const width = options.hash.width;
+    const height = options.hash.height;
+
+    if (!src) {
+      return new Handlebars.SafeString(
+        `<span style="color: red; font-weight: bold;">[Missing image src]</span>`
+      );
+    }
+
+    let imgTag = `<img src="${src}"`;
+
+    if (width) {
+      imgTag += ` width="${width}"`;
+    }
+
+    if (height) {
+      imgTag += ` height="${height}"`;
+    }
+
+    imgTag += ` />`;
+
+    return new Handlebars.SafeString(imgTag);
+  });
+}
+
+/**
  * Register just-handlebars-helpers
  * @see https://github.com/leapfrogtechnology/just-handlebars-helpers
  */
@@ -274,5 +307,6 @@ export function registerAllHelpers() {
   registerTableHelper();
   registerHandleMissingHelper();
   registerJustHandlebarsHelpers();
+  registerImgHelper();
 }
 
