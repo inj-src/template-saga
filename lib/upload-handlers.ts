@@ -1,6 +1,7 @@
 import { renderAsync } from "@inj-src/docx-preview";
 import JSZip from "jszip";
 import { purifyTemplate } from "./utils";
+import DOMPurify from 'dompurify';
 
 /**
  * Result interface for upload handlers
@@ -21,9 +22,10 @@ export async function handleDocxUpload(file: File): Promise<UploadResult> {
    const container = document.createElement("div");
    await renderAsync(file, container, undefined, { inWrapper: false, useBase64URL: true });
    const html = purifyTemplate(container.innerHTML);
+   const cleanHtml = DOMPurify.sanitize(html);
 
    return {
-      html,
+      html: cleanHtml,
       images: {}, // Images are embedded as base64 in the HTML by docx-preview
    };
 }
@@ -122,9 +124,10 @@ export async function handleZipUpload(file: File): Promise<UploadResult> {
    // Combine: [style tags] + [wrapped body content]
    const finalHtml = styleContent + "\n" + wrappedContent;
    const html = purifyTemplate(finalHtml);
+   const cleanHtml = DOMPurify.sanitize(html);
 
    return {
-      html: html.trim(),
+      html: cleanHtml,
       images,
    };
 }
@@ -141,9 +144,10 @@ export async function handleRawHtmlUpload(htmlString: string): Promise<UploadRes
       throw new Error("HTML string cannot be empty");
    }
    const html = purifyTemplate(htmlString);
+   const cleanHtml = DOMPurify.sanitize(html);
 
    return {
-      html: html.trim(),
+      html: cleanHtml,
       images: {},
    };
 }

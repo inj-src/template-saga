@@ -1,15 +1,22 @@
 import { Previewer } from "pagedjs";
 import { useEffect, useState } from "react";
 
+
+
+type page = { content: string, styles: string }
+
+
 export function usePaginate(htmlString: string, paperSize: string = "A4") {
-   const [pages, setPages] = useState<string>("");
+   const [pages, setPages] = useState<page[]>([]);
+   const [baseStyles, setBaseStyles] = useState<string>("");
    const [loading, setLoading] = useState<boolean>(true);
    const [error, setError] = useState<string | null>(null);
 
    useEffect(() => {
       paginate(htmlString, paperSize)
-         .then((pages) => {
-            setPages(pages);
+         .then((result) => {
+            setPages(result.pages);
+            setBaseStyles(result.baseStyles);
          })
          .catch((error) => {
             setError(error.message);
@@ -19,7 +26,7 @@ export function usePaginate(htmlString: string, paperSize: string = "A4") {
          });
    }, [htmlString, paperSize]);
 
-   return { pages, loading, error };
+   return { pages, baseStyles, loading, error };
 }
 
 
@@ -32,15 +39,13 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
 
    document.body.appendChild(template);
 
-   let returnString = '';
-
-   // include style tags
+   let baseStyles = `<style>@media screen { .pagedjs_page { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); outline: 1px solid #d6d3d1; margin-bottom: 2rem; } }</style>`;
    template.querySelectorAll('style').forEach((style) => {
-      returnString += style.outerHTML;
+      baseStyles += style.outerHTML;
    });
 
-   // include sections
    const sections = template.querySelectorAll<HTMLElement>("& > section")
+   const pages: page[] = [];
 
    for (const section of sections) {
 
@@ -74,8 +79,8 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
          }
 
          margins.top = Math.max(margins.top, topHeight);
-         // header.removeAttribute('style');
-         // header.style.height = `${topHeight}px`;
+         header.removeAttribute('style');
+         header.style.height = `${topHeight}px`;
       }
 
       if (footer) {
@@ -93,9 +98,9 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
             bottomHeight += marginBottomNum;
          }
 
-         margins.bottom = Math.max(margins.bottom, bottomHeight);
-         // footer.removeAttribute('style');
-         // footer.style.height = `${bottomHeight}px`;
+         margins.bottom = Math.max(margins.bottom, bottomHeight + 1); // +1 buffer to prevent content overflow
+         footer.removeAttribute('style');
+         footer.style.height = `${bottomHeight}px`;
       }  
 
       const container = document.createElement('div');
@@ -113,11 +118,21 @@ async function paginate(htmlString: string, paperSize: string = "A4") {
       const result = await previewer.preview(section, ['/paged.css', { pageStyle }], container);
       console.log({ result })
 
-      returnString += container.innerHTML;
+      const content = container.innerHTML;
+      const insertedStyles = document.querySelectorAll('style[data-pagedjs-inserted-styles]')
+      const pagedJsStyles = Array.from(insertedStyles).map((style) => style.outerHTML).join('\n');
+
+      pages.push({ content, styles: pagedJsStyles });
+
       container.remove();
+      previewer.polisher.destroy();
    }
 
    template.remove();
-   return returnString;
+
+   return {
+      pages,
+      baseStyles
+   };
 }
 

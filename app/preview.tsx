@@ -3,7 +3,7 @@ import { FileText } from "lucide-react";
 import Handlebars from "handlebars";
 import { useDataStore } from "./store/useDataStore";
 import { usePaginate } from "./paginate";
-import parse from "html-react-parser";
+import root from 'react-shadow';
 
 
 registerAllHelpers();
@@ -45,7 +45,7 @@ export function Preview({
     </div>`;
   }
 
-  const { pages, loading, error } = usePaginate(templateString);
+  // const { pages, baseStyles, loading, error } = usePaginate(templateString);
 
   return (
     <div>
@@ -56,11 +56,17 @@ export function Preview({
         </div>
       )}
       <div
-        // dangerouslySetInnerHTML={{ __html: templateString }}
         id="preview-container"
-        className="w-max mx-auto space-y-4 my-4 items-center flex-col"
+        className="w-max mx-auto space-y-4 my-4 items-center"
       >
-        {parse(pages)}
+        {/* {pages.map((page, index) => ( */}
+        <root.div>
+          <style>
+            {`@media screen {section { border: 1px solid #999999A0} section + section { margin-top: 1rem}}`}
+          </style>
+          <div className="docx" dangerouslySetInnerHTML={{ __html: templateString }} />
+        </root.div>
+        {/* ))} */}
       </div>
     </div>
   );

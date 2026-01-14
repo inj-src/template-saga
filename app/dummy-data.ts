@@ -12,144 +12,210 @@ export const Bill = {
     admissionDate: "2025-12-01T14:30:00Z",
     bed: "WARD-A-203",
   },
-  lineItems: [
-    {
-      description: "Admission Fee",
-      amount: 500.0,
-    },
-    {
-      description: "Operation Fee",
-      amount: 50000.0,
-    },
-    {
-      description: "Surgeon Fee",
-      amount: 12000.0,
-    },
-    {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    },
-    {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    }, {
-      description: "Room Rent (3 days @ 1500)",
-      amount: 4500.0,
-    },
-    {
-      description: "Pharmacy and Medical Supplies",
-      amount: 3275.5,
-    },
-    {
-      description: "Lab Tests",
-      amount: 1200.0,
-    },
-  ],
+  // lineItems: [
+  //   {
+  //     description: "Admission Fee",
+  //     amount: 500.0,
+  //   },
+  //   {
+  //     description: "Operation Fee",
+  //     amount: 50000.0,
+  //   },
+  //   {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   }, {
+  //     description: "Surgeon Fee",
+  //     amount: 12000.0,
+  //   },
+  //   {
+  //     description: "Pharmacy and Medical Supplies",
+  //     amount: 3275.5,
+  //   },
+  //   {
+  //     description: "Lab Tests",
+  //     amount: 1200.0,
+  //   },
+  // ],
+  lineItems:
+    Array(100).fill('').map((item, index) => ({
+      description: `Item ${index + 1}`,
+      amount: Math.random() * 1000,
+    }))
+  ,
   billSummary: {
     totalAmount: 71475.5,
     discount: 2500.0,
